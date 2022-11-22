@@ -1,5 +1,3 @@
-import time
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
@@ -8,7 +6,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
 
-def scrap(text: str, language: str):
+def scrap(data: dict[str, list[str]]):
     driver = webdriver.Chrome()
     driver.get("https://soundoftext.com/")
 
@@ -20,12 +18,14 @@ def scrap(text: str, language: str):
     language_select = driver.find_element(By.CLASS_NAME, "field__select")
     submit_button = driver.find_element(By.CLASS_NAME, "field__submit")
 
-    scroll_to(text_area).send_keys(text)
-    Select(scroll_to(language_select)).select_by_value(language)
+    for language, texts in data.items():
+        Select(scroll_to(language_select)).select_by_value(language)
+        for text in texts:
+            scroll_to(text_area).send_keys(text)
+            scroll_to(submit_button).click()
 
-    scroll_to(submit_button).click()
-    WebDriverWait(driver, 50).until_not(ec.presence_of_element_located((By.CLASS_NAME, 'sk-spinner')))
-
-    download_button = driver.find_element(By.XPATH, "//a[@class='card__action' and text()='Download']")
-    scroll_to(download_button).click()
-    time.sleep(3)
+    WebDriverWait(driver, 60).until_not(ec.presence_of_element_located((By.CLASS_NAME, 'sk-spinner')))
+    download_buttons = driver.find_elements(By.XPATH, "//a[@class='card__action' and text()='Download']")
+    for download_button in download_buttons:
+        scroll_to(download_button).click()
+    input()
