@@ -12,20 +12,20 @@ def scrap(text: str, language: str):
     driver = webdriver.Chrome()
     driver.get("https://soundoftext.com/")
 
-    def scroll_to(element: WebElement):
+    def scroll_to(element: WebElement) -> WebElement:
         driver.execute_script("arguments[0].scrollIntoView();", element)
+        return element
 
     text_area = driver.find_element(By.CLASS_NAME, "field__textarea")
-    language_select = Select(driver.find_element(By.CLASS_NAME, "field__select"))
+    language_select = driver.find_element(By.CLASS_NAME, "field__select")
     submit_button = driver.find_element(By.CLASS_NAME, "field__submit")
 
-    text_area.send_keys(text)
-    language_select.select_by_value(language)
+    scroll_to(text_area).send_keys(text)
+    Select(scroll_to(language_select)).select_by_value(language)
 
-    submit_button.click()
+    scroll_to(submit_button).click()
     WebDriverWait(driver, 50).until_not(ec.presence_of_element_located((By.CLASS_NAME, 'sk-spinner')))
 
     download_button = driver.find_element(By.XPATH, "//a[@class='card__action' and text()='Download']")
-    scroll_to(download_button)
-    download_button.click()
+    scroll_to(download_button).click()
     time.sleep(3)
