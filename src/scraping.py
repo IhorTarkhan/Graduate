@@ -3,7 +3,9 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 def scrap(text: str, language: str):
@@ -21,7 +23,7 @@ def scrap(text: str, language: str):
     language_select.select_by_value(language)
 
     submit_button.click()
-    time.sleep(5)
+    WebDriverWait(driver, 50).until_not(ec.presence_of_element_located((By.CLASS_NAME, 'sk-spinner')))
 
     download_button = driver.find_element(By.XPATH, "//a[@class='card__action' and text()='Download']")
     scroll_to(download_button)
