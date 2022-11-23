@@ -7,10 +7,11 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.util import get_download_folder
+from src.util import get_download_folder, remove_already_exists
 
 
 def scrap(data: dict[str, list[str]]) -> None:
+    data = remove_already_exists(data)
     for language, texts in data.items():
         options = webdriver.ChromeOptions()
         options.add_experimental_option("prefs", {"download.default_directory": get_download_folder(language)})

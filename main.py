@@ -7,5 +7,5 @@ def main():
     scrap({"en-US": ["abc", "apple"], "uk-UA": ["кіт", "собака"]})
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

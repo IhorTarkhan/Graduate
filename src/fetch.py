@@ -2,10 +2,11 @@ import os
 
 import requests
 
-from src.util import get_download_folder
+from src.util import get_download_folder, remove_already_exists
 
 
 def fetch(data: dict[str, list[str]]):
+    data = remove_already_exists(data)
     generate_sound_url = "https://api.soundoftext.com/sounds/"
     download_sound_url = "https://files.soundoftext.com/"
 
