@@ -1,4 +1,3 @@
-import os
 import time
 
 from selenium import webdriver
@@ -8,15 +7,13 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-
-def _get_download_folder(language: str) -> str:
-    return os.path.join(os.getcwd(), "audio_files", language)
+from src.util import get_download_folder
 
 
 def scrap(data: dict[str, list[str]]) -> None:
     for language, texts in data.items():
         options = webdriver.ChromeOptions()
-        options.add_experimental_option("prefs", {"download.default_directory": _get_download_folder(language)})
+        options.add_experimental_option("prefs", {"download.default_directory": get_download_folder(language)})
         driver = webdriver.Chrome(options=options)
         driver.get("https://soundoftext.com/")
 

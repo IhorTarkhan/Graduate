@@ -2,7 +2,7 @@ import os
 
 import requests
 
-from src.util import get_downloads_folder
+from src.util import get_download_folder
 
 
 def fetch(data: dict[str, list[str]]):
@@ -13,6 +13,8 @@ def fetch(data: dict[str, list[str]]):
         for text in texts:
             created_sound = requests.post(generate_sound_url, json={"data": {"text": text, "voice": language}})
             get = requests.get(download_sound_url + created_sound.json()["id"] + ".mp3")
-            path = os.path.join(get_downloads_folder(), "fetch-" + text + ".mp3")
+            folder = get_download_folder(language)
+            os.makedirs(folder, exist_ok=True)
+            path = os.path.join(folder, text + ".mp3")
             with open(path, "wb") as f:
                 f.write(get.content)
