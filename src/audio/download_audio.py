@@ -14,14 +14,16 @@ def __remove_already_exists(data: dict[str, list[str]]) -> dict[str, list[str]]:
     result: dict[str, list[str]] = {}
     for language, texts in data.items():
         for text in texts:
-            if not os.path.exists(path_to(language, text)):
+            if not os.path.exists(get_path(language, text)):
                 if language not in result:
                     result[language] = []
                 result[language].append(text)
     return result
 
 
-def path_to(language: str, text: str = None) -> str:
+def get_path(language: str = None, text: str = None) -> str:
+    if language is None:
+        return os.path.join(os.getcwd(), "data/audio_files")
     if text is None:
         return os.path.join(os.getcwd(), "data/audio_files", language)
     else:
@@ -36,7 +38,7 @@ def scrap(data: dict[str, list[str]]) -> None:
     for language, texts in data.items():
         if language not in scrap_drivers:
             options = webdriver.ChromeOptions()
-            options.add_experimental_option("prefs", {"download.default_directory": path_to(language)})
+            options.add_experimental_option("prefs", {"download.default_directory": get_path(language)})
             driver: WebDriver = webdriver.Chrome(options=options)
             driver.get("https://soundoftext.com/")
             scrap_drivers[language] = driver
@@ -50,7 +52,7 @@ def scrap(data: dict[str, list[str]]) -> None:
         language_select: WebElement = driver.find_element(By.CLASS_NAME, "field__select")
         submit_button: WebElement = driver.find_element(By.CLASS_NAME, "field__submit")
 
-        Select(scroll_to(language_select)).select_by_value(language)
+        Select(scroll_to(language_select)).select_by_visible_text(language)
         for text in texts:
             scroll_to(text_area).send_keys(text)
             scroll_to(submit_button).click()
@@ -70,6 +72,6 @@ def fetch(data: dict[str, list[str]]):
         for text in texts:
             created_sound = requests.post(generate_sound_url, json={"data": {"text": text, "voice": language}})
             get = requests.get(download_sound_url + created_sound.json()["id"] + ".mp3")
-            os.makedirs(path_to(language), exist_ok=True)
-            with open(path_to(language, text), "wb") as f:
+            os.makedirs(get_path(language), exist_ok=True)
+            with open(get_path(language, text), "wb") as f:
                 f.write(get.content)
