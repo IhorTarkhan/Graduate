@@ -1,8 +1,13 @@
+import logging
 import os
 
 
+def logging_config() -> None:
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)25s - %(levelname)8s - %(message)s")
+
+
 def get_download_folder(language: str) -> str:
-    return os.path.join(os.getcwd(), "audio_files", language)
+    return os.path.join(os.getcwd(), "db/audio_files", language)
 
 
 def remove_already_exists(data: dict[str, list[str]]) -> dict[str, list[str]]:

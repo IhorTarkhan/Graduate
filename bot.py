@@ -1,7 +1,10 @@
 import logging
+import sys
+
 from telegram import ReplyKeyboardMarkup, Update, KeyboardButton, ReplyKeyboardRemove
 from telegram.ext import filters, ApplicationBuilder, Application, CallbackContext, CommandHandler, MessageHandler
-import sys
+
+from src.util import logging_config
 
 
 async def start(update: Update, context: CallbackContext):
@@ -20,7 +23,7 @@ async def echo(update: Update, context: CallbackContext):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)25s - %(levelname)8s - %(message)s")
+    logging_config()
     logging.info("stat")
 
     application: Application = ApplicationBuilder().token(sys.argv[1]).build()
