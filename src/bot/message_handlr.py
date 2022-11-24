@@ -1,22 +1,24 @@
-from telegram import Update, ReplyKeyboardRemove, KeyboardButton, ReplyKeyboardMarkup
+import os
+
+from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import CallbackContext
 
 import db.chat_db as chat_db
-from audio.download_audio import path_to
+from audio.download_audio import path_to, fetch
+from bot.bot_commands import home_keyboard
 from db.chat import Chat
 from src.bot import bot_commands
 
 
 async def _sound_of_my_text_execute(update: Update, context: CallbackContext):
     chat_db.update_last_action(update.message.chat_id, None)
-    await context.bot.send_message(chat_id=update.message.chat_id, text="Processing your request...")
-    kb = [
-        [KeyboardButton(bot_commands.sound_of_my_text)]
-    ]
-    kb_markup = ReplyKeyboardMarkup(kb)
+    language = "en-US"
+    if not os.path.exists(path_to(language, update.message.text)):
+        await context.bot.send_message(chat_id=update.message.chat_id, text="Processing your request...")
+        fetch({language: [update.message.text]})
     await context.bot.send_audio(chat_id=update.message.chat_id,
-                                 audio=open(path_to("en-US", "abc"), "rb"),
-                                 reply_markup=kb_markup)
+                                 audio=open(path_to(language, update.message.text), "rb"),
+                                 reply_markup=home_keyboard)
 
 
 async def _sound_of_my_text_handle(update: Update, context: CallbackContext):
