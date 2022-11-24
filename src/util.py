@@ -7,7 +7,7 @@ def logging_config() -> None:
 
 
 def get_download_folder(language: str) -> str:
-    return os.path.join(os.getcwd(), "db/audio_files", language)
+    return os.path.join(os.getcwd(), "data/audio_files", language)
 
 
 def remove_already_exists(data: dict[str, list[str]]) -> dict[str, list[str]]:
