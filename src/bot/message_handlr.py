@@ -4,7 +4,7 @@ from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import CallbackContext
 
 import db.chat_db as chat_db
-from audio.download_audio import get_path, fetch
+from audio.download_audio_files import path_of, fetch
 from bot.bot_commands import home_keyboard
 from db.chat import Chat
 from src.bot import bot_commands
@@ -13,11 +13,11 @@ from src.bot import bot_commands
 async def _sound_of_my_text_execute(update: Update, context: CallbackContext):
     chat_db.update_last_action(update.message.chat_id, None)
     language = "en-US"
-    if not os.path.exists(get_path(language, update.message.text)):
+    if not os.path.exists(path_of(language, update.message.text)):
         await context.bot.send_message(chat_id=update.message.chat_id, text="Processing your request...")
         fetch({language: [update.message.text]})
     await context.bot.send_audio(chat_id=update.message.chat_id,
-                                 audio=open(get_path(language, update.message.text), "rb"),
+                                 audio=open(path_of(language, update.message.text), "rb"),
                                  reply_markup=home_keyboard)
 
 
