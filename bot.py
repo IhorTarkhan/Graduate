@@ -6,6 +6,7 @@ from telegram.ext import filters, ApplicationBuilder, Application, CallbackConte
 
 import db.chat_db as chat_db
 from db.chat import Chat
+from db.util import create_all_tables
 from src.bot import bot_commands
 from src.util import logging_config
 
@@ -25,6 +26,7 @@ async def handle_message(update: Update, context: CallbackContext):
     message = update.message
     chat: Chat = chat_db.find_by_id(message.chat_id)
     if chat.last_action == bot_commands.sound_of_my_text:
+        chat_db.update_last_action(message.chat_id, None)
         logging.info(11)
 
     if bot_commands.sound_of_my_text == message.text:
@@ -40,6 +42,7 @@ async def handle_message(update: Update, context: CallbackContext):
 
 if __name__ == "__main__":
     logging_config()
+    create_all_tables()
 
     application: Application = ApplicationBuilder().token(sys.argv[1]).build()
 
