@@ -6,5 +6,5 @@ change_voice_language = "Change voice language"
 
 home_keyboard = ReplyKeyboardMarkup([
     [KeyboardButton(sound_of_my_text)],
-    [KeyboardButton(change_voice_language)]
+    # [KeyboardButton(change_voice_language)]
 ])
