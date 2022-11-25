@@ -1,5 +1,5 @@
-from src.audio.download_audio_files import scrap, fetch
-from util import logging_config
+from audio.download_audio_files import fetch, scrap
+from util.log_util import logging_config
 
 if __name__ == "__main__":
     logging_config()

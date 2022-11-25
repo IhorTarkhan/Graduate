@@ -1,6 +1,6 @@
 from typing import Optional
 
-import db.util as sql_util
+import util.db_util as sql_util
 from db.chat import Chat
 
 
