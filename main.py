@@ -2,9 +2,9 @@ import sys
 
 from telegram.ext import filters, ApplicationBuilder, Application, MessageHandler
 
-from bot.message_handler import handle_message
-from util.db_util import create_all_tables
-from util.log_util import logging_config
+from src.bot.message_handler import handle_message
+from src.util.db_util import create_all_tables
+from src.util.log_util import logging_config
 
 if __name__ == "__main__":
     logging_config()

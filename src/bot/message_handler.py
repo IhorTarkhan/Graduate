@@ -3,10 +3,10 @@ import os
 from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import CallbackContext
 
-import db.chat_db as chat_db
-from audio.download_audio_files import path_of, fetch
-from bot.bot_commands import home_keyboard
-from db.chat import Chat
+import src.db.chat_db as chat_db
+from src.audio.download_audio_files import path_of, fetch
+from src.bot.bot_commands import home_keyboard
+from src.db.chat import Chat
 from src.bot import bot_commands
 
 

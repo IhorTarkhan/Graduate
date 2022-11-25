@@ -1,7 +1,7 @@
 from typing import Optional
 
-import util.db_util as sql_util
-from db.chat import Chat
+import src.util.db_util as sql_util
+from src.db.chat import Chat
 
 
 def insert_if_not_exist(tg_id: int):
