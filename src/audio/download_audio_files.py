@@ -33,7 +33,7 @@ def path_of(language: str = None, text: str = None) -> str:
 scrap_drivers: dict[str, WebDriver] = {}
 
 
-def scrap(data: dict[str, list[str]]) -> None:
+def scrap_audio_files(data: dict[str, list[str]]) -> None:
     data: dict[str, list[str]] = __remove_already_exists(data)
     for language, texts in data.items():
         if language not in scrap_drivers:
@@ -63,7 +63,7 @@ def scrap(data: dict[str, list[str]]) -> None:
             scroll_to(download_button).click()
 
 
-def fetch(data: dict[str, list[str]]):
+def fetch_audio_files(data: dict[str, list[str]]):
     data = __remove_already_exists(data)
     generate_sound_url = "https://api.soundoftext.com/sounds/"
     download_sound_url = "https://files.soundoftext.com/"

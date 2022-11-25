@@ -1,7 +1,12 @@
 from typing import Optional
 
 import src.util.db_util as sql_util
-from src.db.chat import Chat
+
+
+class Chat:
+    def __init__(self, tg_id: int, last_action: str):
+        self.tg_id = tg_id
+        self.last_action = last_action
 
 
 def insert_if_not_exist(tg_id: int):

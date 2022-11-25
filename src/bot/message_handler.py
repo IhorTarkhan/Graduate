@@ -4,9 +4,9 @@ from telegram import Update, ReplyKeyboardRemove
 from telegram.ext import CallbackContext
 
 import src.db.chat_db as chat_db
-from src.audio.download_audio_files import path_of, fetch
+from src.audio.download_audio_files import path_of, fetch_audio_files
 from src.bot.bot_commands import home_keyboard
-from src.db.chat import Chat
+from src.db.chat_db import Chat
 from src.bot import bot_commands
 
 
@@ -22,7 +22,7 @@ async def _sound_of_my_text_execute(update: Update, context: CallbackContext):
     language = "en-US"
     if not os.path.exists(path_of(language, update.message.text)):
         await context.bot.send_message(chat_id=update.message.chat_id, text="Processing your request...")
-        fetch({language: [update.message.text]})
+        fetch_audio_files({language: [update.message.text]})
     await context.bot.send_audio(chat_id=update.message.chat_id,
                                  audio=open(path_of(language, update.message.text), "rb"),
                                  reply_markup=home_keyboard)
@@ -36,11 +36,10 @@ async def _sound_of_my_text_handle(update: Update, context: CallbackContext):
 
 
 async def _change_voice_language_handle(update: Update, context: CallbackContext):
-    pass
-    # chat_db.update_last_action(update.message.chat_id, bot_commands.change_voice_language)
-    # await context.bot.send_message(chat_id=update.message.chat_id,
-    #                                text="Enter the text you want to sound",
-    #                                reply_markup=ReplyKeyboardRemove())
+    chat_db.update_last_action(update.message.chat_id, bot_commands.change_voice_language)
+    await context.bot.send_message(chat_id=update.message.chat_id,
+                                   text="I am support ",
+                                   reply_markup=ReplyKeyboardRemove())
 
 
 async def _echo(update: Update, context: CallbackContext):
