@@ -1,4 +1,4 @@
-from src.util import db_util
+from src.db import __util as db_util
 
 
 class Language:
@@ -11,8 +11,8 @@ class Language:
     """
 
     def __init__(self, code: str, name: str):
-        self.code = code
-        self.name = name
+        self.code: str = code
+        self.name: str = name
 
 
 def insert_if_not_exist(values: list[tuple[str, str]]):
@@ -38,5 +38,5 @@ def find_count() -> int:
 def find_all_by_name_like(name: str) -> list[Language]:
     return list(map(
         lambda e: Language(e[0], e[1]),
-        db_util.select("SELECT code, name FROM language WHERE name LIKE ?;", ["%"+name+"%"])
+        db_util.select("SELECT code, name FROM language WHERE name LIKE ?;", ["%" + name + "%"])
     ))
