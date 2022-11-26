@@ -1,6 +1,3 @@
-import csv
-import os
-
 from src.util import db_util
 
 
@@ -28,21 +25,18 @@ def insert_if_not_exist(values: list[tuple[str, str]]):
 
 
 def find_all() -> list[Language]:
-    result: list[Language] = []
-    with open(os.path.join("data", "audio_files", "options.csv")) as file:
-        for line in csv.reader(file):
-            result.append(Language(line[0], line[1]))
-    return result
+    return list(map(
+        lambda e: Language(e[0], e[1]),
+        db_util.select("SELECT code, name FROM language;")
+    ))
 
 
 def find_count() -> int:
-    return len(find_all())
+    return db_util.select_one("SELECT COUNT(code) FROM language;")[0]
 
 
 def find_all_by_name_like(name: str) -> list[Language]:
-    result: list[Language] = []
-    with open(os.path.join("data", "audio_files", "options.csv")) as file:
-        for line in csv.reader(file):
-            if name.lower() in line[1].lower():
-                result.append(Language(line[0], line[1]))
-    return result
+    return list(map(
+        lambda e: Language(e[0], e[1]),
+        db_util.select("SELECT code, name FROM language WHERE name LIKE ?;", ["%"+name+"%"])
+    ))

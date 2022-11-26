@@ -20,7 +20,6 @@ async def handle_command_start(update: Update, context: CallbackContext):
 
 async def _sound_of_my_text_execute(update: Update, context: CallbackContext):
     chat_id = bot_util.chat_id(update)
-    chat_db.update_last_action(chat_id, None)
     language = chat_db.find_by_id(chat_id).language_code
     if not os.path.exists(path_of(language, bot_util.text(update))):
         await context.bot.send_message(chat_id=chat_id, text="Processing your request...")
@@ -28,21 +27,22 @@ async def _sound_of_my_text_execute(update: Update, context: CallbackContext):
     await context.bot.send_audio(chat_id=chat_id,
                                  audio=open(path_of(language, bot_util.text(update)), "rb"),
                                  reply_markup=home_keyboard)
+    chat_db.update_last_action(chat_id, None)
 
 
 async def _sound_of_my_text_handle(update: Update, context: CallbackContext):
-    chat_db.update_last_action(bot_util.chat_id(update), bot_commands.sound_of_my_text)
     await context.bot.send_message(chat_id=bot_util.chat_id(update),
                                    text="Enter the text you want to sound",
                                    reply_markup=ReplyKeyboardRemove())
+    chat_db.update_last_action(bot_util.chat_id(update), bot_commands.sound_of_my_text)
 
 
 async def _change_voice_language_handle(update: Update, context: CallbackContext):
-    chat_db.update_last_action(bot_util.chat_id(update), bot_commands.change_voice_language)
     await context.bot.send_message(chat_id=bot_util.chat_id(update),
                                    text="I am support {} languages. Try to type your and i try to find it"
                                    .format(language_db.find_count()),
                                    reply_markup=ReplyKeyboardRemove())
+    chat_db.update_last_action(bot_util.chat_id(update), bot_commands.change_voice_language)
 
 
 async def _change_voice_language_execute(update: Update, context: CallbackContext):
@@ -53,10 +53,10 @@ async def _change_voice_language_execute(update: Update, context: CallbackContex
         await context.bot.send_message(chat_id=chat_id, text="I am sorry, can not find match language")
     elif len(like) == 1:
         chat_db.update_language_code(chat_id, like[0].code)
-        chat_db.update_last_action(chat_id, None)
         await context.bot.send_message(chat_id=chat_id,
                                        text="Yor successful language changed on " + like[0].name,
                                        reply_markup=home_keyboard)
+        chat_db.update_last_action(chat_id, None)
     else:
         keyboard = list(map(lambda x: [InlineKeyboardButton(x.name, callback_data=x.name)], like))
         await context.bot.send_message(chat_id=chat_id,
