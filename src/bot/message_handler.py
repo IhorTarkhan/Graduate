@@ -3,12 +3,12 @@ import os
 from telegram import Update, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import CallbackContext
 
-import src.db.chat_db as chat_db
-import src.db.language_db as language_db
-import src.util.bot_util as bot_util
 from src.audio.download_audio_files import path_of, fetch_audio_files
 from src.bot import bot_commands
 from src.bot.bot_commands import home_keyboard
+from src.db import chat_db
+from src.db import language_db
+from src.util import bot_util
 
 
 async def handle_command_start(update: Update, context: CallbackContext):

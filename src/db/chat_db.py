@@ -1,6 +1,6 @@
 from typing import Optional
 
-import src.util.db_util as db_util
+from src.util import db_util
 
 
 class Chat:
