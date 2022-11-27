@@ -4,9 +4,10 @@ import sys
 from telegram.ext import filters, ApplicationBuilder, Application, MessageHandler, CallbackQueryHandler
 
 from src.bot.message_handler import handle_message
+from src.db import __util as db_util
 from src.db.chat_db import Chat
 from src.db.language_db import Language
-from src.db import __util as db_util
+from src.download_word_groups import download_word_groups
 
 
 def _setup():
@@ -18,6 +19,7 @@ def _setup():
 
 if __name__ == "__main__":
     _setup()
+    download_word_groups()
 
     application: Application = ApplicationBuilder().token(sys.argv[1]).build()
 
