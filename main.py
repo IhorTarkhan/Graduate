@@ -7,6 +7,7 @@ from src.bot.message_handler import handle_message
 from src.db import __util as db_util
 from src.db.chat_db import Chat
 from src.db.language_db import Language
+from src.db.words_groups_db import WordsGroups
 from src.download_word_groups import download_word_groups
 
 
@@ -15,6 +16,7 @@ def _setup():
 
     db_util.change(Chat.__doc__)
     db_util.change(Language.__doc__)
+    db_util.change(WordsGroups.__doc__)
 
 
 if __name__ == "__main__":

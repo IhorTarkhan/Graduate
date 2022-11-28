@@ -8,6 +8,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
+from src.db import words_groups_db
+
 
 def download_word_groups():
     driver: WebDriver = webdriver.Chrome()
@@ -40,7 +42,9 @@ def download_word_groups():
             all_li_tags = all_li_tags[0: int(len(all_li_tags) / 2)]
             words: list[str] = list(map(lambda x: x.text, all_li_tags))
             words: list[str] = list(map(lambda x: x[13:] if x.startswith("Toggle Audio\n") else x, words))
-            logging.info(header.__str__() + words.__str__())
+            words_groups_db.insert_if_not_exist(header, words)
+            for word in words:
+                logging.info(header + "," + word)
 
     scrap_word_groups("https://learnenglish.britishcouncil.org/vocabulary/a1-a2-vocabulary")
     print("---------------")
