@@ -1,13 +1,19 @@
+import logging
+import time
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 def download_word_groups():
     driver: WebDriver = webdriver.Chrome()
 
     def scrap_word_groups(link: str):
+        print(link)
         driver.get(link)
 
         images: list[WebElement] = driver.find_elements(By.CLASS_NAME, "field--name-field-image")
@@ -15,7 +21,26 @@ def download_word_groups():
         images.pop(0)
         links = list(map(lambda x: x.find_element(By.TAG_NAME, "a").get_attribute("href"), images))
         for link in links:
-            print(link)
+            # print(link)
+            driver.get(link)
+            header: str = driver.find_element(By.CLASS_NAME, "page-header").text
+
+            iframe_src = driver.find_elements(By.TAG_NAME, "iframe")[1].get_attribute("src")
+            # print(iframe_src)
+            driver.get(iframe_src)
+
+            iframe_src = driver.find_elements(By.TAG_NAME, "iframe")[0].get_attribute("src")
+            # print(iframe_src)
+            driver.get(iframe_src)
+
+            time.sleep(5)
+            WebDriverWait(driver, 5).until(ec.presence_of_element_located((By.TAG_NAME, "li")))
+
+            all_li_tags = driver.find_elements(By.TAG_NAME, "li")
+            all_li_tags = all_li_tags[0: int(len(all_li_tags) / 2)]
+            words: list[str] = list(map(lambda x: x.text, all_li_tags))
+            words: list[str] = list(map(lambda x: x[13:] if x.startswith("Toggle Audio\n") else x, words))
+            logging.info(header.__str__() + words.__str__())
 
     scrap_word_groups("https://learnenglish.britishcouncil.org/vocabulary/a1-a2-vocabulary")
     print("---------------")
