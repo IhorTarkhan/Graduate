@@ -8,14 +8,21 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
+from src.__util import selenium_chrome_driver_path
 from src.db import words_groups_db
 
 
 def download_word_groups():
-    driver: WebDriver = webdriver.Chrome()
+    if words_groups_db.select_total_count() != 0:
+        groups_count = words_groups_db.select_count_of_groups()
+        words_count = words_groups_db.select_total_count()
+        logging.info(f"Skip download word groups, already {groups_count} groups with {words_count} words in db")
+        return
+
+    driver: WebDriver = webdriver.Chrome(selenium_chrome_driver_path())
 
     def scrap_word_groups(link: str):
-        print(link)
+        logging.info(link)
         driver.get(link)
 
         images: list[WebElement] = driver.find_elements(By.CLASS_NAME, "field--name-field-image")
@@ -23,16 +30,16 @@ def download_word_groups():
         images.pop(0)
         links = list(map(lambda x: x.find_element(By.TAG_NAME, "a").get_attribute("href"), images))
         for link in links:
-            # print(link)
+            logging.info(link)
             driver.get(link)
             header: str = driver.find_element(By.CLASS_NAME, "page-header").text
 
             iframe_src = driver.find_elements(By.TAG_NAME, "iframe")[1].get_attribute("src")
-            # print(iframe_src)
+            logging.info(iframe_src)
             driver.get(iframe_src)
 
             iframe_src = driver.find_elements(By.TAG_NAME, "iframe")[0].get_attribute("src")
-            # print(iframe_src)
+            logging.info(iframe_src)
             driver.get(iframe_src)
 
             time.sleep(5)
@@ -47,5 +54,5 @@ def download_word_groups():
                 logging.info(header + "," + word)
 
     scrap_word_groups("https://learnenglish.britishcouncil.org/vocabulary/a1-a2-vocabulary")
-    print("---------------")
+    logging.info("---------------")
     scrap_word_groups("https://learnenglish.britishcouncil.org/vocabulary/b1-b2-vocabulary")

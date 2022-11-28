@@ -15,6 +15,10 @@ def select_one(sql: str, parameters: Iterable = (), pre_query=None) -> Any:
             return cursor.execute(sql, list(parameters)).fetchone()
 
 
+def select_one_field(sql: str, parameters: Iterable = (), pre_query=None) -> Any:
+    return select_one(sql, parameters, pre_query)[0]
+
+
 def select(sql: str, parameters: Iterable = (), pre_query=None) -> list[Any]:
     with closing(sqlite3.connect(database_location)) as connection:
         with closing(connection.cursor()) as c:

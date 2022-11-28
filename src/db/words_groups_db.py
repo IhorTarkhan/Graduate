@@ -21,3 +21,11 @@ def insert_if_not_exist(groups: str, words: list[str]):
         ", ".join(map(lambda x: "(?, ?)", words)))
     parameters = [words[i // 2] if i % 2 == 1 else groups for i in range(len(words) * 2)]
     db_util.change(sql, parameters)
+
+
+def select_total_count():
+    return db_util.select_one_field("SELECT COUNT(*) FROM words_groups;")
+
+
+def select_count_of_groups():
+    return db_util.select_one_field("SELECT COUNT(DISTINCT groups) FROM words_groups;")

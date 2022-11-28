@@ -32,7 +32,7 @@ def find_all() -> list[Language]:
 
 
 def find_count() -> int:
-    return db_util.select_one("SELECT COUNT(code) FROM language;")[0]
+    return db_util.select_one_field("SELECT COUNT(code) FROM language;")
 
 
 def find_all_by_name_like(name: str) -> list[Language]:
