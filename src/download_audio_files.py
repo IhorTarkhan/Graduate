@@ -5,14 +5,13 @@ import time
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.__util import path_of_audio
+from src.__util import path_of_audio, FirefoxOptions
 
 
 def __remove_already_exists(data: dict[str, list[str]]) -> dict[str, list[str]]:
@@ -29,13 +28,7 @@ def __remove_already_exists(data: dict[str, list[str]]) -> dict[str, list[str]]:
 def __scrap(data: dict[str, list[str]]) -> None:
     data: dict[str, list[str]] = __remove_already_exists(data)
     for language, texts in data.items():
-        options: FirefoxOptions = webdriver.FirefoxOptions()
-        options.add_argument("--headless")
-        options.set_preference("browser.download.folderList", 2)
-        options.set_preference("browser.download.manager.showWhenStarting", False)
-        options.set_preference("browser.download.dir", path_of_audio(language))
-        options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-gzip")
-        driver: WebDriver = webdriver.Firefox(options=options)
+        driver: WebDriver = webdriver.Firefox(options=FirefoxOptions(download_dir=path_of_audio(language)))
         driver.get("https://soundoftext.com/")
 
         def scroll_to(element: WebElement) -> WebElement:

@@ -4,19 +4,17 @@ import os
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
+from src.__util import FirefoxOptions
 from src.db import words_groups_db
 
 
 def __scrap_one_group(link: str):
-    options: FirefoxOptions = webdriver.FirefoxOptions()
-    options.add_argument("--headless")
-    driver: WebDriver = webdriver.Firefox(options=options)
+    driver: WebDriver = webdriver.Firefox(options=FirefoxOptions())
     logging.info(link)
     driver.get(link)
     header: str = driver.find_element(By.CLASS_NAME, "page-header").text
@@ -38,10 +36,7 @@ def __scrap_one_group(link: str):
 def __scrap_word_groups(link: str):
     logging.info(link)
 
-    options: FirefoxOptions = webdriver.FirefoxOptions()
-    options.add_argument("--headless")
-    driver: WebDriver = webdriver.Firefox(options=options)
-
+    driver: WebDriver = webdriver.Firefox(options=FirefoxOptions())
     driver.get(link)
 
     images: list[WebElement] = driver.find_elements(By.CLASS_NAME, "field--name-field-image")
