@@ -3,7 +3,6 @@ import threading
 import time
 
 import requests
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
@@ -11,7 +10,7 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.__util import path_of_audio, FirefoxOptions
+from src.__util import path_of_audio, FirefoxDriver
 
 
 def __remove_already_exists(data: dict[str, list[str]]) -> dict[str, list[str]]:
@@ -28,7 +27,7 @@ def __remove_already_exists(data: dict[str, list[str]]) -> dict[str, list[str]]:
 def __scrap(data: dict[str, list[str]]) -> None:
     data: dict[str, list[str]] = __remove_already_exists(data)
     for language, texts in data.items():
-        driver: WebDriver = webdriver.Firefox(options=FirefoxOptions(download_dir=path_of_audio(language)))
+        driver: WebDriver = FirefoxDriver(download_dir=path_of_audio(language))
         driver.get("https://soundoftext.com/")
 
         def scroll_to(element: WebElement) -> WebElement:
@@ -51,11 +50,11 @@ def __scrap(data: dict[str, list[str]]) -> None:
 
         class MyThread(threading.Thread):
             def run(self):
-                time.sleep(10)
+                time.sleep(3)
                 driver.quit()
 
         MyThread().start()
-    time.sleep(10)
+    time.sleep(3)
 
 
 def __fetch(data: dict[str, list[str]]):
