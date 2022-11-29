@@ -1,18 +1,22 @@
 #!/bin/sh
 
-ssh root@65.109.4.189 "
-killall python3
-rm -fr ~/Graduate/src
-rm ~/Graduate/main.py
-rm ~/Graduate/requirements.txt
+ssh dev@65.109.4.189 "
+killall firefox
+cd ~/Graduate
+source venv/bin/activate
+killall python python3
+rm -fr src
+rm -f main.py
+rm -f requirements.txt
 "
 
-scp -r src root@65.109.4.189:~/Graduate/src
-scp requirements.txt root@65.109.4.189:~/Graduate
-scp main.py root@65.109.4.189:~/Graduate
+scp -r src dev@65.109.4.189:~/Graduate/src
+scp requirements.txt dev@65.109.4.189:~/Graduate
+scp main.py dev@65.109.4.189:~/Graduate
 
-ssh root@65.109.4.189 "
+ssh dev@65.109.4.189 "
 cd ~/Graduate
-pip3 install -r requirements.txt
-python3 main.py \$(cat bot.key)
+source venv/bin/activate
+pip install -r requirements.txt
+python main.py \$(cat bot.key)
 " &

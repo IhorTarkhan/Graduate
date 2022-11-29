@@ -1,15 +1,18 @@
 import os
+import threading
+import time
 
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.__util import path_of_audio, selenium_chrome_driver_path
+from src.__util import path_of_audio
 
 
 def __remove_already_exists(data: dict[str, list[str]]) -> dict[str, list[str]]:
@@ -23,19 +26,17 @@ def __remove_already_exists(data: dict[str, list[str]]) -> dict[str, list[str]]:
     return result
 
 
-scrap_drivers: dict[str, WebDriver] = {}
-
-
 def __scrap(data: dict[str, list[str]]) -> None:
     data: dict[str, list[str]] = __remove_already_exists(data)
     for language, texts in data.items():
-        if language not in scrap_drivers:
-            options = webdriver.ChromeOptions()
-            options.add_experimental_option("prefs", {"download.default_directory": path_of_audio(language)})
-            driver: WebDriver = webdriver.Chrome(selenium_chrome_driver_path(), options=options)
-            driver.get("https://soundoftext.com/")
-            scrap_drivers[language] = driver
-        driver: WebDriver = scrap_drivers[language]
+        options: FirefoxOptions = webdriver.FirefoxOptions()
+        options.add_argument("--headless")
+        options.set_preference("browser.download.folderList", 2)
+        options.set_preference("browser.download.manager.showWhenStarting", False)
+        options.set_preference("browser.download.dir", path_of_audio(language))
+        options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-gzip")
+        driver: WebDriver = webdriver.Firefox(options=options)
+        driver.get("https://soundoftext.com/")
 
         def scroll_to(element: WebElement) -> WebElement:
             driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -45,7 +46,7 @@ def __scrap(data: dict[str, list[str]]) -> None:
         language_select: WebElement = driver.find_element(By.CLASS_NAME, "field__select")
         submit_button: WebElement = driver.find_element(By.CLASS_NAME, "field__submit")
 
-        Select(scroll_to(language_select)).select_by_visible_text(language)
+        Select(scroll_to(language_select)).select_by_value(language)
         for text in texts:
             scroll_to(text_area).send_keys(text)
             scroll_to(submit_button).click()
@@ -54,6 +55,14 @@ def __scrap(data: dict[str, list[str]]) -> None:
         download_buttons = driver.find_elements(By.XPATH, "//a[@class='card__action' and text()='Download']")
         for download_button in download_buttons:
             scroll_to(download_button).click()
+
+        class MyThread(threading.Thread):
+            def run(self):
+                time.sleep(10)
+                driver.quit()
+
+        MyThread().start()
+    time.sleep(10)
 
 
 def __fetch(data: dict[str, list[str]]):

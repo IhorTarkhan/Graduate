@@ -3,22 +3,25 @@ import logging
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import Select
 
-from src.__util import selenium_chrome_driver_path
 from src.db import language_db
 
 
 def __scrap() -> None:
-    driver: WebDriver = webdriver.Chrome(selenium_chrome_driver_path())
+    options: FirefoxOptions = webdriver.FirefoxOptions()
+    options.add_argument("--headless")
+    driver: WebDriver = webdriver.Firefox(options=options)
     driver.get("https://soundoftext.com")
 
     language_select: WebElement = driver.find_element(By.CLASS_NAME, "field__select")
     driver.execute_script("arguments[0].scrollIntoView();", language_select)
     options: list[WebElement] = Select(language_select).options
     language_db.insert_if_not_exist(list(map(lambda o: (o.get_attribute("value"), o.accessible_name), options)))
+    driver.quit()
 
 
 def __fetch() -> None:

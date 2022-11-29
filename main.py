@@ -14,7 +14,8 @@ from src.download_word_groups import download_word_groups
 
 def __setup():
     logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s.%(msecs)03d %(name)25s [%(threadName)25s] %(levelname)7s : %(message)s",
+                        # format="%(asctime)s.%(msecs)03d %(name)25s [%(threadName)25s] %(levelname)7s : %(message)s",
+                        format="%(asctime)s.%(msecs)03d %(levelname)7s : %(message)s",
                         datefmt="%Y-%m-%d %H:%M:%S")
     db_util.change(Chat.__doc__)
     db_util.change(Language.__doc__)
