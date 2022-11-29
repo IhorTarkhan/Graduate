@@ -13,14 +13,12 @@ from src.__util import FirefoxOptions
 from src.db import words_groups_db
 
 
-def __scrap_one_group(link: str):
+def __scrap_one_group(link: str, count_log: str):
+    logging.info(f"Start  download {count_log}: {link}")
     driver: WebDriver = webdriver.Firefox(options=FirefoxOptions())
-    logging.info(link)
     driver.get(link)
     header: str = driver.find_element(By.CLASS_NAME, "page-header").text
-
     iframe_src = driver.find_elements(By.TAG_NAME, "iframe")[1].get_attribute("src")
-    logging.info(iframe_src)
     driver.get(iframe_src.replace("_embed", ""))
 
     WebDriverWait(driver, 5).until(ec.presence_of_element_located((By.TAG_NAME, "li")))
@@ -31,6 +29,7 @@ def __scrap_one_group(link: str):
     words: list[str] = list(map(lambda x: x[13:] if x.startswith("Toggle Audio\n") else x, words))
     words_groups_db.insert_if_not_exist(header, words)
     driver.quit()
+    logging.info(f"Finish download {count_log}")
 
 
 def __scrap_word_groups(link: str):
@@ -48,7 +47,7 @@ def __scrap_word_groups(link: str):
     with concurrent.futures.ThreadPoolExecutor(os.cpu_count()) as executor:
         futures = []
         for link in links:
-            futures.append(executor.submit(__scrap_one_group, link=link))
+            futures.append(executor.submit(__scrap_one_group, link=link, count_log=f"{len(futures) + 1}/{len(links)}"))
         concurrent.futures.wait(futures)
     # for link in links:
     #     __scrap_one_group(link)
