@@ -8,8 +8,8 @@ from src.db import __util as db_util
 from src.db.chat_db import Chat
 from src.db.language_db import Language
 from src.db.words_groups_db import WordsGroups
-from src.download_languages import download_languages
-from src.download_word_groups import download_word_groups
+from src.download.languages import download_languages
+from src.download.word_groups import download_word_groups
 
 
 def __setup():

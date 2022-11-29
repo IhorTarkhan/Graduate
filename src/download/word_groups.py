@@ -8,8 +8,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from src.__util import FirefoxDriver
 from src.db import words_groups_db
+from src.download.__FirefoxDriver import FirefoxDriver
 
 
 def __scrap_one_group(link: str, count_log: str):

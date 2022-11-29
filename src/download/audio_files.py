@@ -10,7 +10,8 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.__util import path_of_audio, FirefoxDriver
+from src.__util import path_of_audio
+from src.download.__FirefoxDriver import FirefoxDriver
 
 
 def __remove_already_exists(data: dict[str, list[str]]) -> dict[str, list[str]]:
@@ -72,8 +73,8 @@ def __fetch(data: dict[str, list[str]]):
 
 
 def download_audio_files(data: dict[str, list[str]]):
-    __fetch(data)
-    # __scrap(data)
+    # __fetch(data)
+    __scrap(data)
 
 
 def download_audio_file(language: str, word: str):

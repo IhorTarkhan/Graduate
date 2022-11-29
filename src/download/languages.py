@@ -6,7 +6,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import Select
 
-from src.__util import FirefoxDriver
+from src.download.__FirefoxDriver import FirefoxDriver
 from src.db import language_db
 
 

@@ -10,7 +10,7 @@ from src.bot.bot_commands import home_keyboard, BotCommand
 from src.db import chat_db
 from src.db import language_db
 from src.db.chat_db import Chat, ChatStatus
-from src.download_audio_files import download_audio_file
+from src.download.audio_files import download_audio_file
 
 
 async def __command_start(update: Update, context: CallbackContext):
@@ -45,7 +45,7 @@ async def __start_sound_text_flow(update: Update, context: CallbackContext):
     chat_db.update_status(bot_util.chat_id(update), ChatStatus.EXPECT_TEXT_TO_SOUND)
 
 
-async def __strat_change_voice_language_flow(update: Update, context: CallbackContext):
+async def __start_change_voice_language_flow(update: Update, context: CallbackContext):
     await context.bot.send_message(chat_id=bot_util.chat_id(update),
                                    text="I am support {} languages. Try to type your and i try to find it"
                                    .format(language_db.find_count()),
@@ -93,6 +93,6 @@ async def handle_message(update: Update, context: CallbackContext):
     elif text == BotCommand.SOUND_OF_MY_TEXT.value:
         await __start_sound_text_flow(update, context)
     elif text == BotCommand.CHANGE_VOICE_LANGUAGE.value:
-        await __strat_change_voice_language_flow(update, context)
+        await __start_change_voice_language_flow(update, context)
     else:
         await __echo(update, context)
