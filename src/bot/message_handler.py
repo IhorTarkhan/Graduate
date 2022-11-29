@@ -1,3 +1,4 @@
+import logging
 import os
 
 from telegram import Update, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
@@ -72,6 +73,7 @@ async def __change_voice_language(update: Update, context: CallbackContext):
 
 
 async def __echo(update: Update, context: CallbackContext):
+    logging.info("echo")
     await context.bot.send_message(chat_id=bot_util.chat_id(update), text=bot_util.text(update))
 
 

@@ -28,6 +28,7 @@ def __fetch() -> None:
 
 def download_languages():
     if language_db.find_count() == 0:
+        logging.warning("Languages list is empty, start download")
         __fetch()
         # __scrap()
     else:
