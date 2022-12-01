@@ -48,8 +48,6 @@ def __scrap_word_groups(link: str):
         for link in links:
             futures.append(executor.submit(__scrap_one_group, link=link, count_log=f"{len(futures) + 1}/{len(links)}"))
         concurrent.futures.wait(futures)
-    # for link in links:
-    #     __scrap_one_group(link)
 
 
 def download_word_groups():
