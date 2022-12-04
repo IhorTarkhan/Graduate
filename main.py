@@ -14,7 +14,6 @@ from src.download.basic_words import download_basic_words
 
 def __setup():
     logging.basicConfig(level=logging.INFO,
-                        # format="%(asctime)s.%(msecs)03d %(name)25s [%(threadName)25s] %(levelname)7s : %(message)s",
                         format="%(asctime)s.%(msecs)03d %(levelname)7s : %(message)s",
                         datefmt="%Y-%m-%d %H:%M:%S")
     db_util.change(Chat.CREATE_SCRIPT)
