@@ -2,7 +2,7 @@ from src.db import __util as db_util
 
 
 class Language:
-    """
+    CREATE_SCRIPT = """
         CREATE TABLE IF NOT EXISTS language
         (
             code TEXT PRIMARY KEY,

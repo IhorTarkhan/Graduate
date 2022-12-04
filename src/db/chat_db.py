@@ -12,7 +12,7 @@ class ChatStatus(Enum):
 
 
 class Chat:
-    """
+    CREATE_SCRIPT = """
         CREATE TABLE IF NOT EXISTS chat
         (
             tg_id         INTEGER PRIMARY KEY,

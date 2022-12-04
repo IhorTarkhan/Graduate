@@ -7,9 +7,9 @@ from src.bot.message_handler import handle_message
 from src.db import __util as db_util
 from src.db.chat_db import Chat
 from src.db.language_db import Language
-from src.db.words_groups_db import WordsGroups
+from src.db.basic_words_db import BasicWords
 from src.download.languages import download_languages
-from src.download.word_groups import download_word_groups
+from src.download.basic_words import download_basic_words
 
 
 def __setup():
@@ -17,12 +17,12 @@ def __setup():
                         # format="%(asctime)s.%(msecs)03d %(name)25s [%(threadName)25s] %(levelname)7s : %(message)s",
                         format="%(asctime)s.%(msecs)03d %(levelname)7s : %(message)s",
                         datefmt="%Y-%m-%d %H:%M:%S")
-    db_util.change(Chat.__doc__)
-    db_util.change(Language.__doc__)
-    db_util.change(WordsGroups.__doc__)
+    db_util.change(Chat.CREATE_SCRIPT)
+    db_util.change(Language.CREATE_SCRIPT)
+    db_util.change(BasicWords.CREATE_SCRIPT)
 
     download_languages()
-    download_word_groups()
+    download_basic_words()
 
 
 if __name__ == "__main__":
