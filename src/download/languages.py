@@ -14,4 +14,4 @@ def download_languages():
                    map(lambda o: (o["code"], o["name"]),
                        get))))
     else:
-        logging.info(f"Skip download languages, already {language_db.find_count()} in db")
+        logging.info(f"Skip download languages, already {language_db .find_count()} in db")
