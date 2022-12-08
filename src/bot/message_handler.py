@@ -32,6 +32,7 @@ async def __echo(update: Update, context: CallbackContext):
 async def handle_message(update: Update, context: CallbackContext):
     chat_id: int = bot_util.chat_id(update)
     text: str = bot_util.text(update)
+    chat_db.insert_if_not_exist(chat_id)
     chat: Chat = chat_db.find_by_id(chat_id)
     status: ChatStatus = chat.status
     if text == BotCommand.COMMAND_START.value:

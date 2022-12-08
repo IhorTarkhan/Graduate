@@ -28,8 +28,8 @@ class Chat:
         self.language_code: str = language_code
 
 
-def insert_if_not_exist(tg_id: int):
-    return lambda c: c.execute("INSERT OR IGNORE INTO chat(tg_id) VALUES (?);", [tg_id])
+def insert_if_not_exist(tg_id: int) -> None:
+    db_util.change("INSERT OR IGNORE INTO chat(tg_id) VALUES (?);", [tg_id])
 
 
 def upsert(tg_id: int) -> None:
@@ -43,16 +43,13 @@ def upsert(tg_id: int) -> None:
 
 
 def update_status(tg_id: int, status: ChatStatus) -> None:
-    db_util.change("UPDATE chat SET status = ? WHERE tg_id = ?", [status.value, tg_id],
-                   insert_if_not_exist(tg_id))
+    db_util.change("UPDATE chat SET status = ? WHERE tg_id = ?", [status.value, tg_id])
 
 
 def update_language_code(tg_id: int, language_code: Optional[str]) -> None:
-    db_util.change("UPDATE chat SET language_code = ? WHERE tg_id = ?", [language_code, tg_id],
-                   insert_if_not_exist(tg_id))
+    db_util.change("UPDATE chat SET language_code = ? WHERE tg_id = ?", [language_code, tg_id])
 
 
 def find_by_id(tg_id: int) -> Chat:
-    select = db_util.select_one("SELECT tg_id, status, language_code FROM chat WHERE tg_id = ?", [tg_id],
-                                insert_if_not_exist(tg_id))
+    select = db_util.select_one("SELECT tg_id, status, language_code FROM chat WHERE tg_id = ?", [tg_id])
     return Chat(select[0], ChatStatus(select[1]), select[2])
