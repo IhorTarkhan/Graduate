@@ -30,6 +30,13 @@ class BasicWords:
         self.word: str = word
 
 
+class WordGroup:
+    def __init__(self, order: int, level_name: str, title: str):
+        self.ord: int = order
+        self.level_name: str = level_name
+        self.title: str = title
+
+
 def insert_word_lever(level: str):
     db_util.change("INSERT INTO words_level(title) VALUES (?);", [level])
 
@@ -64,3 +71,16 @@ def select_group_count() -> int:
 
 def select_word_count() -> int:
     return db_util.select_one_field("SELECT COUNT(*) FROM word")
+
+
+PAGE_SIZE: int = 5
+
+
+def select_word_groups(page: int = 0) -> list[WordGroup]:
+    select = db_util.select(""" 
+                SELECT ord, level_name, title
+                FROM words_group
+                ORDER BY ord
+                LIMIT ? OFFSET ?
+            """, [PAGE_SIZE + 1, PAGE_SIZE * page])
+    return list(map(lambda e: WordGroup(e[0], e[1], e[2]), select))
