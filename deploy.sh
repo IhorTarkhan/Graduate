@@ -1,10 +1,9 @@
 #!/bin/sh
 
 ssh dev@65.109.4.189 "
-killall firefox
 cd ~/Graduate
 source venv/bin/activate
-killall python python3
+killall python
 rm -fr src
 rm -f main.py
 rm -f requirements.txt

@@ -8,6 +8,9 @@ class BotCommand(Enum):
     SOUND_OF_MY_TEXT = "Sound of my text"
     TAKE_A_LESSON = "Take a lesson"
     CHANGE_VOICE_LANGUAGE = "Change voice language"
+    NEXT_PAGE = "NEXT_PAGE"
+    PREVIOUS_PAGE = "PREVIOUS_PAGE"
+    CANCEL = "CANCEL"
 
 
 home_keyboard = ReplyKeyboardMarkup([
