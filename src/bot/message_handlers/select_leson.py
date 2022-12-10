@@ -1,11 +1,13 @@
+from typing import Optional
+
 from lazy_streams import stream
 from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, Message
 from telegram.ext import CallbackContext
 
 from src.bot import __util as bot_util
 from src.bot.bot_commands import BotCommand
-from src.db import basic_words_db
-from src.db import chat_db, language_selector_state_db
+from src.bot.message_handlers.lesson_progress import start_lesson
+from src.db import basic_words_db, chat_db, language_selector_state_db
 from src.db.basic_words_db import WordGroup, PAGE_SIZE
 from src.db.chat_db import ChatStatus
 
@@ -72,7 +74,7 @@ async def select_lesson(update: Update, context: CallbackContext):
                                             language_selector_state.chat_id,
                                             language_selector_state.message_id,
                                             parse_mode="markdown")
-        chat_db.update_status(bot_util.chat_id(update), ChatStatus.NONE)
+        chat_db.update_status(chat_id, ChatStatus.NONE)
     elif text == BotCommand.NEXT_PAGE.value or text == BotCommand.PREVIOUS_PAGE.value:
         if text == BotCommand.NEXT_PAGE.value:
             language_selector_state_db.increase_page(chat_id)
@@ -87,11 +89,17 @@ async def select_lesson(update: Update, context: CallbackContext):
                                             parse_mode="markdown")
     else:
         word_groups, _, _ = __select_word_groups(language_selector_state.current_page)
-        if text.lower() in stream(word_groups).map(lambda x: x.title.lower()).to_list():
-            await context.bot.edit_message_text(f"You select *{text}*",
+        selected: Optional[str] = None
+        for wg in word_groups:
+            if wg.title.lower() == text.lower():
+                selected = wg.title
+                break
+        if selected is not None:
+            await context.bot.edit_message_text(f"You select *{selected}*",
                                                 language_selector_state.chat_id,
                                                 language_selector_state.message_id,
                                                 parse_mode="markdown")
-            chat_db.update_status(bot_util.chat_id(update), ChatStatus.STUDYING_LESSON)
+            chat_db.update_status(chat_id, ChatStatus.STUDYING_LESSON)
+            await start_lesson(chat_id, selected, context)
         else:
             await context.bot.send_message(chat_id=chat_id, text="Please select value above or cancel")

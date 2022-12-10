@@ -84,3 +84,13 @@ def select_word_groups(page: int = 0) -> list[WordGroup]:
                 LIMIT ? OFFSET ?
             """, [PAGE_SIZE + 1, PAGE_SIZE * page])
     return list(map(lambda e: WordGroup(e[0], e[1], e[2]), select))
+
+
+def select_random_word(group_name: str) -> str:
+    return db_util.select_one_field(""" 
+                SELECT value
+                FROM word
+                WHERE group_name = ?
+                ORDER BY RANDOM()
+                LIMIT 1;
+            """, [group_name])

@@ -3,8 +3,7 @@ from telegram.ext import CallbackContext
 
 from src.bot import __util as bot_util
 from src.bot.bot_commands import home_keyboard
-from src.db import chat_db
-from src.db import language_db
+from src.db import chat_db, language_db
 from src.db.chat_db import ChatStatus
 
 
