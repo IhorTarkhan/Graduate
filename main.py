@@ -12,7 +12,7 @@ from src.db.language_selector_state_db import LanguageSelectorState
 from src.db.lesson_attempt_db import LessonAttempt
 from src.db.lesson_progress_db import LessonProgress
 from src.download.basic_words import download_basic_words
-from src.download.languages import download_languages
+from src.download.languages import insert_default_languages
 
 
 def __setup():
@@ -26,7 +26,7 @@ def __setup():
     db_util.change(LessonAttempt.CREATE_SCRIPT)
     db_util.change(LessonProgress.CREATE_SCRIPT)
 
-    download_languages()
+    insert_default_languages()
     download_basic_words()
 
 

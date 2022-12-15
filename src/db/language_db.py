@@ -15,8 +15,8 @@ class Language:
         self.name: str = name
 
 
-def insert_if_not_exist(values: list[tuple[str, str]]):
-    sql = "INSERT OR IGNORE INTO language(code, name) VALUES {0};".format(", ".join(map(lambda x: "(?, ?)", values)))
+def insert(values: list[tuple[str, str]]):
+    sql = "INSERT INTO language(code, name) VALUES {0};".format(", ".join(map(lambda x: "(?, ?)", values)))
     parameters = []
     for code, name in values:
         parameters.append(code)
