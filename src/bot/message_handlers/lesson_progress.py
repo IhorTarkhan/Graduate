@@ -1,13 +1,10 @@
-import os
-
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from src.__util import path_of_audio
 from src.bot import __util as bot_util
 from src.db import chat_db, lesson_attempt_db, lesson_progress_db, basic_words_db
 from src.db.lesson_progress_db import LessonProgress
-from src.download.audio_files import download_audio_file
+from src.download.audio_files import sound_audio
 
 
 async def start_lesson(chat_id: int, group_title: str, context: CallbackContext):
@@ -16,13 +13,7 @@ async def start_lesson(chat_id: int, group_title: str, context: CallbackContext)
     language = chat_db.find_by_id(chat_id).language_code
     word = basic_words_db.select_random_word(group_title)
     lesson_progress_db.insert_new(active_attempt.id, word)
-    if not os.path.exists(path_of_audio(language, word)):
-        download_audio_file(language, word)
-    await context.bot.send_audio(chat_id=chat_id,
-                                 audio=open(path_of_audio(language, word), "rb"),
-                                 filename="test")
-    # await context.bot.send_message(chat_id=chat_id,
-    #                                text=f"{text}: lesson_progress in development")
+    await context.bot.send_audio(chat_id, sound_audio(language, word, "test"))
 
 
 async def lesson_progress(update: Update, context: CallbackContext):
@@ -40,8 +31,4 @@ async def lesson_progress(update: Update, context: CallbackContext):
     language = chat_db.find_by_id(chat_id).language_code
     word = basic_words_db.select_random_word(attempt.group_name)
     lesson_progress_db.insert_new(attempt.id, word)
-    if not os.path.exists(path_of_audio(language, word)):
-        download_audio_file(language, word)
-    await context.bot.send_audio(chat_id=chat_id,
-                                 audio=open(path_of_audio(language, word), "rb"),
-                                 filename="test")
+    await context.bot.send_audio(chat_id, sound_audio(language, word, "test"))
