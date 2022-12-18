@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import CallbackContext
 
-from src.bot import __util as bot_util
+from src.bot.UpdateAdapter import UpdateAdapter
 from src.bot.bot_commands import BotCommand
 from src.bot.message_handlers.change_voice_language import change_voice_language, start_change_voice_language_flow
 from src.bot.message_handlers.common import command_start, processing, can_not_understand_you
@@ -9,32 +9,32 @@ from src.bot.message_handlers.lesson_progress import lesson_progress
 from src.bot.message_handlers.select_leson import start_select_lesson_flow, select_lesson
 from src.bot.message_handlers.sound_text import sound_text, start_sound_text_flow
 from src.db import chat_db
-from src.db.chat_db import Chat, ChatStatus
+from src.db.chat_db import ChatStatus
 
 
 async def handle_message(update: Update, context: CallbackContext):
-    chat_id: int = bot_util.chat_id(update)
-    text: str = bot_util.text(update)
-    chat_db.insert_if_not_exist(chat_id)
-    chat: Chat = chat_db.find_by_id(chat_id)
-    status: ChatStatus = chat.status
-    if text == BotCommand.COMMAND_START.value:
-        await command_start(update, context)
+    u = UpdateAdapter(update)
+    bot = context.bot
+
+    chat_db.insert_if_not_exist(u.chat_id)
+    status: ChatStatus = chat_db.find_by_id(u.chat_id).status
+    if u.is_command(BotCommand.COMMAND_START):
+        await command_start(u, bot)
     elif status == ChatStatus.PROCESSING:
-        await processing(update, context)
+        await processing(u, bot)
     elif status == ChatStatus.EXPECT_TEXT_TO_SOUND:
-        await sound_text(update, context)
+        await sound_text(u, bot)
     elif status == ChatStatus.EXPECT_LANGUAGE_OF_VOICE_TO_SET:
-        await change_voice_language(update, context)
+        await change_voice_language(u, bot)
     elif status == ChatStatus.EXPECT_SELECT_LESSON:
-        await select_lesson(update, context)
+        await select_lesson(u, bot)
     elif status == ChatStatus.STUDYING_LESSON:
-        await lesson_progress(update, context)
-    elif text == BotCommand.SOUND_OF_MY_TEXT.value:
-        await start_sound_text_flow(update, context)
-    elif text == BotCommand.TAKE_A_LESSON.value:
-        await start_select_lesson_flow(update, context)
-    elif text == BotCommand.CHANGE_VOICE_LANGUAGE.value:
-        await start_change_voice_language_flow(update, context)
+        await lesson_progress(u, bot)
+    elif u.is_command(BotCommand.SOUND_OF_MY_TEXT):
+        await start_sound_text_flow(u, bot)
+    elif u.is_command(BotCommand.TAKE_A_LESSON):
+        await start_select_lesson_flow(u, bot)
+    elif u.is_command(BotCommand.CHANGE_VOICE_LANGUAGE):
+        await start_change_voice_language_flow(u, bot)
     else:
-        await can_not_understand_you(update, context)
+        await can_not_understand_you(u, bot)

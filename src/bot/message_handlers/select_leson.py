@@ -1,10 +1,9 @@
 from typing import Optional
 
 from lazy_streams import stream
-from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, Message
-from telegram.ext import CallbackContext
+from telegram import Bot, InlineKeyboardMarkup, InlineKeyboardButton, Message
 
-from src.bot import __util as bot_util
+from src.bot.UpdateAdapter import UpdateAdapter
 from src.bot.bot_commands import BotCommand
 from src.bot.message_handlers.lesson_progress import start_lesson
 from src.db import basic_words_db, chat_db, language_selector_state_db
@@ -55,51 +54,46 @@ def __prepare_message(page: int = 0) -> tuple[str, InlineKeyboardMarkup]:
     return text, reply_markup
 
 
-async def start_select_lesson_flow(update: Update, context: CallbackContext):
+async def start_select_lesson_flow(u: UpdateAdapter, bot: Bot):
     text, reply_markup = __prepare_message()
-    message: Message = await context.bot.send_message(chat_id=bot_util.chat_id(update),
-                                                      text=text,
-                                                      reply_markup=reply_markup,
-                                                      parse_mode="markdown")
-    chat_db.update_status(bot_util.chat_id(update), ChatStatus.EXPECT_SELECT_LESSON)
-    language_selector_state_db.save(bot_util.chat_id(update), message.message_id, 0)
+    message: Message = await bot.send_message(u.chat_id, text, "markdown", reply_markup=reply_markup)
+    chat_db.update_status(u.chat_id, ChatStatus.EXPECT_SELECT_LESSON)
+    language_selector_state_db.save(u.chat_id, message.message_id, 0)
 
 
-async def select_lesson(update: Update, context: CallbackContext):
-    chat_id = bot_util.chat_id(update)
-    text = bot_util.text(update)
-    language_selector_state = language_selector_state_db.select_by_chat(chat_id)
-    if text == BotCommand.CANCEL.value:
-        await context.bot.edit_message_text("_You have cancel selection_",
-                                            language_selector_state.chat_id,
-                                            language_selector_state.message_id,
-                                            parse_mode="markdown")
-        chat_db.update_status(chat_id, ChatStatus.NONE)
-    elif text == BotCommand.NEXT_PAGE.value or text == BotCommand.PREVIOUS_PAGE.value:
-        if text == BotCommand.NEXT_PAGE.value:
-            language_selector_state_db.increase_page(chat_id)
+async def select_lesson(u: UpdateAdapter, bot: Bot):
+    language_selector_state = language_selector_state_db.select_by_chat(u.chat_id)
+    if u.text == BotCommand.CANCEL.value:
+        await bot.edit_message_text("_You have cancel selection_",
+                                    language_selector_state.chat_id,
+                                    language_selector_state.message_id,
+                                    parse_mode="markdown")
+        chat_db.update_status(u.chat_id, ChatStatus.NONE)
+    elif u.text == BotCommand.NEXT_PAGE.value or u.text == BotCommand.PREVIOUS_PAGE.value:
+        if u.text == BotCommand.NEXT_PAGE.value:
+            language_selector_state_db.increase_page(u.chat_id)
             new_text, reply_markup = __prepare_message(language_selector_state.current_page + 1)
         else:
-            language_selector_state_db.decrease_page(chat_id)
+            language_selector_state_db.decrease_page(u.chat_id)
             new_text, reply_markup = __prepare_message(language_selector_state.current_page - 1)
-        await context.bot.edit_message_text(new_text,
-                                            language_selector_state.chat_id,
-                                            language_selector_state.message_id,
-                                            reply_markup=reply_markup,
-                                            parse_mode="markdown")
+        await bot.edit_message_text(new_text,
+                                    language_selector_state.chat_id,
+                                    language_selector_state.message_id,
+                                    reply_markup=reply_markup,
+                                    parse_mode="markdown")
     else:
         word_groups, _, _ = __select_word_groups(language_selector_state.current_page)
         selected: Optional[str] = None
         for wg in word_groups:
-            if wg.title.lower() == text.lower():
+            if wg.title.lower() == u.text.lower():
                 selected = wg.title
                 break
         if selected is not None:
-            await context.bot.edit_message_text(f"You select *{selected}*",
-                                                language_selector_state.chat_id,
-                                                language_selector_state.message_id,
-                                                parse_mode="markdown")
-            chat_db.update_status(chat_id, ChatStatus.STUDYING_LESSON)
-            await start_lesson(chat_id, selected, context)
+            await bot.edit_message_text(f"You select *{selected}*",
+                                        language_selector_state.chat_id,
+                                        language_selector_state.message_id,
+                                        parse_mode="markdown")
+            chat_db.update_status(u.chat_id, ChatStatus.STUDYING_LESSON)
+            await start_lesson(u.chat_id, selected, bot)
         else:
-            await context.bot.send_message(chat_id=chat_id, text="Please select value above or cancel")
+            await bot.send_message(u.chat_id, "Please select value above or cancel")

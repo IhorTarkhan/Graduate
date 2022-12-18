@@ -73,8 +73,7 @@ def download_basic_words():
         __scrap_word_groups("a1-a2")
         __scrap_word_groups("b1-b2")
     else:
-        level_count = basic_words_db.select_level_count()
-        group_count = basic_words_db.select_group_count()
-        word_count = basic_words_db.select_word_count()
-        logging.info(
-            f"Skip download word groups, already levels={level_count}, groups={group_count}, words={word_count} in db")
+        lc = basic_words_db.select_level_count()
+        gc = basic_words_db.select_group_count()
+        wc = basic_words_db.select_word_count()
+        logging.info(f"Skip download word groups, already levels={lc}, groups={gc}, words={wc} in db")
