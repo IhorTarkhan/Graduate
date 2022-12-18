@@ -1,15 +1,29 @@
 import concurrent.futures
 import logging
 import os
+from typing import Optional
 
+from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
 from src.db import basic_words_db
-from src.download.__FirefoxDriver import FirefoxDriver
+
+
+class FirefoxDriver(webdriver.Firefox):
+    def __init__(self, download_dir: Optional[str] = None):
+        options = Options()
+        options.add_argument("--headless")
+        if download_dir is not None:
+            options.set_preference("browser.download.folderList", 2)
+            options.set_preference("browser.download.manager.showWhenStarting", False)
+            options.set_preference("browser.download.dir", download_dir)
+            options.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-gzip")
+        super().__init__(options=options)
 
 
 def __scrap_one_group(link: str, group: str, count_log: str):

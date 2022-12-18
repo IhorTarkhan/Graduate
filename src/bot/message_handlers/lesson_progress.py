@@ -4,7 +4,7 @@ from telegram.ext import CallbackContext
 from src.bot import __util as bot_util
 from src.db import chat_db, lesson_attempt_db, lesson_progress_db, basic_words_db
 from src.db.lesson_progress_db import LessonProgress
-from src.download.audio_files import sound_audio
+from src.service.audio_files import sound_audio
 
 
 async def start_lesson(chat_id: int, group_title: str, context: CallbackContext):

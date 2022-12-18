@@ -30,7 +30,7 @@ def change(sql: str, parameters: list = ()):
             cursor: Cursor = c
             if len(parameters) == 0:
                 for s in sql.split(";"):
-                    cursor.execute(s, list(parameters))
+                    cursor.execute(s)
             else:
                 cursor.execute(sql, list(parameters))
         connection.commit()

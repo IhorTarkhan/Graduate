@@ -3,7 +3,7 @@ import logging
 from src.db import language_db
 
 
-def insert_default_languages():
+def insert_basic_languages():
     if language_db.find_count() == 0:
         logging.warning("Languages list is empty, inserting")
         language_db.insert([

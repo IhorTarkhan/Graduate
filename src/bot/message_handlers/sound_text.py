@@ -5,7 +5,7 @@ from src.bot import __util as bot_util
 from src.bot.bot_commands import home_keyboard
 from src.db import chat_db
 from src.db.chat_db import ChatStatus
-from src.download.audio_files import sound_audio
+from src.service.audio_files import sound_audio
 
 
 async def sound_text(update: Update, context: CallbackContext):
