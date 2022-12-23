@@ -13,8 +13,7 @@ class BotKeyboardButton(Enum):
 
 
 class BotInMessageButton(Enum):
-    NEXT_PAGE = "NEXT_PAGE"
-    PREVIOUS_PAGE = "PREVIOUS_PAGE"
+    PAGE = "PAGE"
     CANCEL = "CANCEL"
 
 

@@ -7,7 +7,6 @@ from src.db import __util as db_util
 class ChatStatus(Enum):
     NONE = None
     PROCESSING = "PROCESSING"
-    EXPECT_SELECT_LESSON = "EXPECT_SELECT_LESSON"
     STUDYING_LESSON = "STUDYING_LESSON"
 
 
