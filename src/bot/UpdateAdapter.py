@@ -20,8 +20,10 @@ class UpdateAdapter:
         elif update.callback_query is not None:
             self.type: UpdateAdapterType = UpdateAdapterType.CALLBACK
             callback = update.callback_query
-            self.chat_id: int = callback.message.chat_id
+            original_message = callback.message
+            self.chat_id: int = original_message.chat_id
             self.text: str = callback.data
+            self.original_message_id: int = original_message.message_id
         else:
             raise RuntimeError("Unsupported message type: " + update.__str__())
 
