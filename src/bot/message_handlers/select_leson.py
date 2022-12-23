@@ -66,6 +66,9 @@ async def start_select_lesson_flow(u: UpdateAdapter, bot: Bot):
 
 
 async def select_lesson(u: UpdateAdapter, bot: Bot):
+    if not u.text.startswith(callback_prefix):
+        return
+
     split_text = u.text[len(callback_prefix):]
     if split_text == BotInMessageButton.CANCEL.value:
         await bot.edit_message_text("❌ Yor have cancel lesson selection", u.chat_id, u.original_message_id)

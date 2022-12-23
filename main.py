@@ -3,7 +3,7 @@ import sys
 
 from telegram.ext import filters, ApplicationBuilder, Application, MessageHandler, CallbackQueryHandler
 
-from src.bot.message_handler import handle_message
+from src.bot.message_handler import handle_text, handle_callback
 from src.db import __util as db_util
 from src.db.basic_words_db import BasicWords
 from src.db.chat_db import Chat
@@ -33,7 +33,7 @@ if __name__ == "__main__":
 
     application: Application = ApplicationBuilder().token(sys.argv[1]).build()
 
-    application.add_handler(MessageHandler(filters.TEXT, handle_message))
-    application.add_handler(CallbackQueryHandler(handle_message))
+    application.add_handler(MessageHandler(filters.TEXT, handle_text))
+    application.add_handler(CallbackQueryHandler(handle_callback))
 
     application.run_polling()

@@ -23,6 +23,9 @@ async def start_change_voice_language_flow(u: UpdateAdapter, bot: Bot):
 
 
 async def change_voice_language(u: UpdateAdapter, bot: Bot):
+    if not u.text.startswith(callback_prefix):
+        return
+
     if u.text == callback_prefix + BotInMessageButton.CANCEL.value:
         await bot.edit_message_text("❌ Yor have cancel language selection", u.chat_id, u.original_message_id)
         return

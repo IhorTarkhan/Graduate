@@ -27,6 +27,3 @@ class UpdateAdapter:
 
     def is_text(self, bot_command: Enum) -> bool:
         return self.type == UpdateAdapterType.TEXT and self.text == bot_command.value
-
-    def is_command_start_with(self, prefix: str) -> bool:
-        return self.type == UpdateAdapterType.CALLBACK and self.text.startswith(prefix)
