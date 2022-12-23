@@ -5,14 +5,20 @@ from telegram import ReplyKeyboardMarkup, KeyboardButton
 
 class BotCommand(Enum):
     COMMAND_START = "/start"
+
+
+class BotKeyboardButton(Enum):
     TAKE_A_LESSON = "Take a lesson"
     CHANGE_VOICE_LANGUAGE = "Change voice language"
+
+
+class BotInMessageButton(Enum):
     NEXT_PAGE = "NEXT_PAGE"
     PREVIOUS_PAGE = "PREVIOUS_PAGE"
     CANCEL = "CANCEL"
 
 
 home_keyboard = ReplyKeyboardMarkup([
-    [KeyboardButton(BotCommand.CHANGE_VOICE_LANGUAGE.value)],
-    [KeyboardButton(BotCommand.TAKE_A_LESSON.value)]
+    [KeyboardButton(BotKeyboardButton.CHANGE_VOICE_LANGUAGE.value)],
+    [KeyboardButton(BotKeyboardButton.TAKE_A_LESSON.value)]
 ])

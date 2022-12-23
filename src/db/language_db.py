@@ -35,8 +35,6 @@ def find_count() -> int:
     return db_util.select_one_field("SELECT COUNT(code) FROM language;")
 
 
-def find_all_by_name_like(name: str) -> list[Language]:
-    return list(map(
-        lambda e: Language(e[0], e[1]),
-        db_util.select("SELECT code, name FROM language WHERE name LIKE ?;", ["%" + name + "%"])
-    ))
+def find_by_name(name: str) -> Language:
+    select = db_util.select_one("SELECT code, name FROM language WHERE name = ?;", [name])
+    return Language(select[0], select[1])
