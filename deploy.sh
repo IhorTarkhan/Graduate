@@ -4,6 +4,7 @@ ssh dev@65.109.4.189 "
 cd ~/Graduate
 source venv/bin/activate
 killall python
+killall firefox
 rm -fr src
 rm -f main.py
 rm -f requirements.txt
