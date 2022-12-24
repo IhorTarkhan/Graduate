@@ -43,6 +43,18 @@ def new_random_word(tg_id: int) -> str:
     """, [tg_id])
 
 
+def delete_last_word(tg_id: int) -> None:
+    Transaction.change("""
+            DELETE
+            FROM lesson_progress
+            WHERE id = (SELECT lp.id
+                        FROM lesson_progress lp
+                                 LEFT JOIN lesson_attempt la on la.id = lp.attempt_id
+                        WHERE la.tg_id = ?
+                          AND chat_answer IS NULL)
+    """, [tg_id])
+
+
 def save_chat_answer(tg_id: int, answer: str) -> (bool, str):
     select = Transaction.select_one("""
             UPDATE lesson_progress
@@ -67,4 +79,7 @@ def get_score(tg_id: int) -> (int, int):
             ORDER BY la.start DESC
             LIMIT 1;
     """, [tg_id])
-    return int(select[0]), int(select[1])
+    try:
+        return int(select[0]), int(select[1])
+    except TypeError:
+        return 0, 0

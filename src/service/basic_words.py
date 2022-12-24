@@ -36,7 +36,7 @@ def __scrap_one_group(link: str, group: str, count_log: str):
     WebDriverWait(driver, 5).until(ec.presence_of_element_located((By.TAG_NAME, "li")))
 
     all_li_tags = driver.find_elements(By.TAG_NAME, "li")
-    all_li_tags = all_li_tags[0: int(len(all_li_tags) / 2)]
+    all_li_tags = all_li_tags[0: len(all_li_tags) // 2]
     words: list[str] = list(map(lambda x: x.text.replace("Toggle Audio\n", ""), all_li_tags))
     basic_words_db.insert_words(words, group)
     driver.quit()
