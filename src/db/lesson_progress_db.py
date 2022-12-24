@@ -83,3 +83,14 @@ def get_score(tg_id: int) -> (int, int):
         return int(select[0]), int(select[1])
     except TypeError:
         return 0, 0
+
+
+def delete_chat_data(tg_id: int) -> None:
+    Transaction.change("""
+            DELETE FROM lesson_progress
+            WHERE id IN (SELECT lp.id
+                         FROM lesson_progress lp
+                                  LEFT JOIN lesson_attempt la on lp.attempt_id = la.id
+                         WHERE la.tg_id = ?);
+    """, [tg_id])
+    Transaction.change("DELETE FROM lesson_attempt WHERE tg_id = ?;", [tg_id])

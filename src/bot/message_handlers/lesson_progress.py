@@ -30,7 +30,6 @@ async def start_lesson(u: UpdateAdapter, bot: Bot, group_title: str):
         reply_markup=reply_markup(0, 0))
     chat_db.update_status(u.chat_id, ChatStatus.STUDYING_LESSON)
     lesson_progress_db.new_attempt(u.chat_id, group_title)
-    # todo clear attempt on /start command
     await send_random_audio_from_lesson(u, bot)
 
 
