@@ -1,4 +1,4 @@
-from src.db import __util as db_util
+from src.db.Transaction import Transaction
 
 
 class LessonProgress:
@@ -22,7 +22,7 @@ class LessonProgress:
 
 
 def new_attempt(tg_id: int, group_name: str) -> None:
-    db_util.change("""
+    Transaction.change("""
             INSERT INTO lesson_attempt(tg_id, group_name, language_code)
             SELECT ch.tg_id, ?, ch.language_code
             FROM chat ch
@@ -31,7 +31,7 @@ def new_attempt(tg_id: int, group_name: str) -> None:
 
 
 def new_random_word(tg_id: int) -> str:
-    return db_util.select_one_field("""
+    return Transaction.select_one_field("""
             INSERT INTO lesson_progress(attempt_id, word)
             SELECT la.id, w.value
             FROM word w
@@ -44,7 +44,7 @@ def new_random_word(tg_id: int) -> str:
 
 
 def save_chat_answer(tg_id: int, answer: str) -> (bool, str):
-    select = db_util.select_one("""
+    select = Transaction.select_one("""
             UPDATE lesson_progress
             SET chat_answer = ?
             WHERE id = (SELECT lp.id
@@ -58,7 +58,7 @@ def save_chat_answer(tg_id: int, answer: str) -> (bool, str):
 
 
 def get_score(tg_id: int) -> (int, int):
-    select = db_util.select_one("""
+    select = Transaction.select_one("""
             SELECT SUM(UPPER(lp.word) == UPPER(lp.chat_answer)), COUNT(*)
             FROM lesson_attempt la
                      LEFT JOIN lesson_progress lp on lp.attempt_id = la.id

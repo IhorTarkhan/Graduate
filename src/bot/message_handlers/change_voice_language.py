@@ -1,5 +1,6 @@
 from lazy_streams import stream
 from telegram import Bot, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.constants import ParseMode
 
 from src.bot.UpdateAdapter import UpdateAdapter
 from src.bot.bot_commands import BotInMessageButton
@@ -33,5 +34,5 @@ async def change_voice_language(u: UpdateAdapter, bot: Bot):
     await bot.edit_message_text(f"Yor have successful changed language on: _{db_language.name}_",
                                 u.chat_id,
                                 u.original_message_id,
-                                parse_mode="markdown")
+                                parse_mode=ParseMode.MARKDOWN_V2)
     chat_db.update_language_code(u.chat_id, db_language.code)

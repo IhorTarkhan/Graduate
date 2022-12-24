@@ -1,4 +1,5 @@
 from telegram import Bot
+from telegram.constants import ParseMode
 
 from src.bot.UpdateAdapter import UpdateAdapter
 from src.db import chat_db, lesson_progress_db
@@ -10,7 +11,7 @@ async def start_lesson(u: UpdateAdapter, bot: Bot, group_title: str):
     await bot.edit_message_text(f"You start lesson *{group_title}*",
                                 u.chat_id,
                                 u.original_message_id,
-                                parse_mode="markdown")
+                                parse_mode=ParseMode.MARKDOWN_V2)
     chat_db.update_status(u.chat_id, ChatStatus.STUDYING_LESSON)
     lesson_progress_db.new_attempt(u.chat_id, group_title)
     # todo to pass this exam you have to pass x words with more then y success score

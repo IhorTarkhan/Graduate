@@ -1,4 +1,4 @@
-from src.db import __util as db_util
+from src.db.Transaction import Transaction
 
 
 class BasicWords:
@@ -38,38 +38,38 @@ class WordGroup:
 
 
 def insert_word_lever(level: str):
-    db_util.change("INSERT INTO words_level(title) VALUES (?);", [level])
+    Transaction.change("INSERT INTO words_level(title) VALUES (?);", [level])
 
 
 def insert_word_groups(groups: list[str], level: str):
     sql = "INSERT INTO words_group(title, level_name) VALUES {0};".format(("(?, ?), " * len(groups))[:-2])
     parameters = [groups[i // 2] if i % 2 == 0 else level for i in range(len(groups) * 2)]
-    db_util.change(sql, parameters)
+    Transaction.change(sql, parameters)
 
 
 def insert_words(words: list[str], group: str):
     sql = "INSERT INTO word(value, group_name) VALUES {0};".format(("(?, ?), " * len(words))[:-2])
     parameters = [words[i // 2] if i % 2 == 0 else group for i in range(len(words) * 2)]
-    db_util.change(sql, parameters)
+    Transaction.change(sql, parameters)
 
 
 def select_level_count() -> int:
-    return db_util.select_one_field("SELECT COUNT(*) FROM words_level")
+    return Transaction.select_one_field("SELECT COUNT(*) FROM words_level")
 
 
 def select_group_count() -> int:
-    return db_util.select_one_field("SELECT COUNT(*) FROM words_group")
+    return Transaction.select_one_field("SELECT COUNT(*) FROM words_group")
 
 
 def select_word_count() -> int:
-    return db_util.select_one_field("SELECT COUNT(*) FROM word")
+    return Transaction.select_one_field("SELECT COUNT(*) FROM word")
 
 
 PAGE_SIZE: int = 5
 
 
 def select_word_groups(page: int = 0) -> list[WordGroup]:
-    select = db_util.select(""" 
+    select = Transaction.select(""" 
                 SELECT ord, level_name, title
                 FROM words_group
                 ORDER BY ord
@@ -79,7 +79,7 @@ def select_word_groups(page: int = 0) -> list[WordGroup]:
 
 
 def select_random_word(group_name: str) -> str:
-    return db_util.select_one_field(""" 
+    return Transaction.select_one_field(""" 
                 SELECT value
                 FROM word
                 WHERE group_name = ?

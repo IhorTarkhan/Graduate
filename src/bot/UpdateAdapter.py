@@ -23,7 +23,7 @@ class UpdateAdapter:
             self.text: str = callback.data
             self.original_message_id: int = original_message.message_id
         else:
-            raise RuntimeError("Unsupported message type: " + update.__str__())
+            raise ValueError("Unsupported message type: " + update.__str__())
 
     def is_text(self, bot_command: Enum) -> bool:
         return self.type == UpdateAdapterType.TEXT and self.text == bot_command.value

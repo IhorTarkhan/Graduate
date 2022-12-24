@@ -1,5 +1,6 @@
 from lazy_streams import stream
 from telegram import Bot, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.constants import ParseMode
 
 from src.bot.UpdateAdapter import UpdateAdapter
 from src.bot.bot_commands import BotInMessageButton
@@ -78,6 +79,6 @@ async def select_lesson(u: UpdateAdapter, bot: Bot):
                                     u.chat_id,
                                     u.original_message_id,
                                     reply_markup=reply_markup,
-                                    parse_mode="markdown")
+                                    parse_mode=ParseMode.MARKDOWN_V2)
     else:
         await start_lesson(u, bot, split_text)
