@@ -4,9 +4,8 @@ from telegram import Bot, InlineKeyboardMarkup, InlineKeyboardButton
 from src.bot.UpdateAdapter import UpdateAdapter
 from src.bot.bot_commands import BotInMessageButton
 from src.bot.message_handlers.lesson_progress import start_lesson
-from src.db import basic_words_db, chat_db
+from src.db import basic_words_db
 from src.db.basic_words_db import WordGroup, PAGE_SIZE
-from src.db.chat_db import ChatStatus
 
 callback_prefix: str = "SELECT_LESSON_"
 
@@ -81,9 +80,4 @@ async def select_lesson(u: UpdateAdapter, bot: Bot):
                                     reply_markup=reply_markup,
                                     parse_mode="markdown")
     else:
-        await bot.edit_message_text(f"You start lesson *{split_text}*",
-                                    u.chat_id,
-                                    u.original_message_id,
-                                    parse_mode="markdown")
-        chat_db.update_status(u.chat_id, ChatStatus.STUDYING_LESSON)
         await start_lesson(u, bot, split_text)
