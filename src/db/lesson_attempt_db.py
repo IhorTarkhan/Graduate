@@ -14,16 +14,16 @@ class LessonAttempt:
 
     def __init__(self, _id: int, correct_word_count: int, word_count: int, group_name: str):
         self.id: int = _id
-        self.correct_word_count: int = correct_word_count
+        self.correct_word_count: int = 0 if correct_word_count is None else correct_word_count
         self.word_count: int = word_count
         self.group_name: str = group_name
 
 
-def insert_new(tg_id: int, group_name: str) -> None:
+def new_attempt(tg_id: int, group_name: str) -> None:
     db_util.change("INSERT INTO lesson_attempt(tg_id, group_name) VALUES (?, ?);", [tg_id, group_name])
 
 
-def get_active(tg_id: int) -> LessonAttempt:
+def get_active_attempt(tg_id: int) -> LessonAttempt:
     select = db_util.select_one("""
             SELECT la.id, SUM(upper(lp.word) == upper(lp.chat_answer)), COUNT(*), la.group_name
             FROM lesson_attempt la

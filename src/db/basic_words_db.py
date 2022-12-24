@@ -41,18 +41,10 @@ def insert_word_lever(level: str):
     db_util.change("INSERT INTO words_level(title) VALUES (?);", [level])
 
 
-def insert_word_group(group: str, level: str):
-    db_util.change("INSERT INTO words_group(title, level_name) VALUES (?, ?);", [group, level])
-
-
 def insert_word_groups(groups: list[str], level: str):
     sql = "INSERT INTO words_group(title, level_name) VALUES {0};".format(("(?, ?), " * len(groups))[:-2])
     parameters = [groups[i // 2] if i % 2 == 0 else level for i in range(len(groups) * 2)]
     db_util.change(sql, parameters)
-
-
-def insert_word(word: str, group: str):
-    db_util.change("INSERT INTO word(value, group_name) VALUES (?, ?);", [word, group])
 
 
 def insert_words(words: list[str], group: str):

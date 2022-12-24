@@ -86,4 +86,4 @@ async def select_lesson(u: UpdateAdapter, bot: Bot):
                                     u.original_message_id,
                                     parse_mode="markdown")
         chat_db.update_status(u.chat_id, ChatStatus.STUDYING_LESSON)
-        await start_lesson(u.chat_id, split_text, bot)
+        await start_lesson(u, bot, split_text)
