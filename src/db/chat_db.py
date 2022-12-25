@@ -2,6 +2,7 @@ from enum import Enum
 from typing import Optional
 
 from src.db.Transaction import Transaction
+from src.db.language_db import Language
 
 
 class ChatStatus(Enum):
@@ -22,10 +23,10 @@ class Chat:
         """
     ]
 
-    def __init__(self, tg_id: int, status: ChatStatus, language_code: str):
+    def __init__(self, tg_id: int, status: ChatStatus, language: Language):
         self.tg_id: int = tg_id
         self.status: ChatStatus = status
-        self.language_code: str = language_code
+        self.language: Language = language
 
 
 def insert_if_not_exist(tg_id: int) -> None:
@@ -51,5 +52,11 @@ def update_language_code(tg_id: int, language_code: Optional[str]) -> None:
 
 
 def find_by_id(tg_id: int) -> Chat:
-    select = Transaction.select_one("SELECT tg_id, status, language_code FROM chat WHERE tg_id = ?", [tg_id])
-    return Chat(select[0], ChatStatus(select[1]), select[2])
+    select = Transaction.select_one(
+        """
+            SELECT c.tg_id, c.status, l.code, l.name, l.translate_api_code
+            FROM chat c
+                     LEFT JOIN language l on c.language_code = l.code
+            WHERE tg_id = ?;
+        """, [tg_id])
+    return Chat(select[0], ChatStatus(select[1]), Language(select[2], select[3], select[4]))

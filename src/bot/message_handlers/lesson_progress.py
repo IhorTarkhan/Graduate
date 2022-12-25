@@ -5,6 +5,7 @@ from src.bot.bot_commands import home_keyboard
 from src.db import chat_db, lesson_progress_db
 from src.db.chat_db import ChatStatus
 from src.service.audio_files import sound_audio
+from src.service.translate import translate
 
 CALLBACK_PREFIX: str = "LESSON_"
 REQUIRED_WORDS: int = 15
@@ -34,9 +35,12 @@ async def start_lesson(u: UpdateAdapter, bot: Bot, group_title: str):
 
 
 async def send_random_audio_from_lesson(u: UpdateAdapter, bot: Bot):
-    word = lesson_progress_db.new_random_word(u.chat_id)
-    language = chat_db.find_by_id(u.chat_id).language_code
-    audio = sound_audio(language, word, "test")
+    word = lesson_progress_db.select_random_word(u.chat_id)
+    chat = chat_db.find_by_id(u.chat_id)
+    if chat.language.code != "en-US":
+        word = translate(chat.language.translate_api_code, word)
+    lesson_progress_db.save_word(u.chat_id, word)
+    audio = sound_audio(chat.language.code, word, "test")
     await bot.send_audio(u.chat_id, audio)
 
 
@@ -45,14 +49,11 @@ async def lesson_progress(u: UpdateAdapter, bot: Bot):
         lesson_progress_db.delete_last_word(u.chat_id)
         chat_db.update_status(u.chat_id, ChatStatus.NONE)
         correct_count, all_count = lesson_progress_db.get_score(u.chat_id)
+        score = f"\nYour score is {correct_count}/{all_count}"
         if u.text == "✅":
-            await bot.send_message(u.chat_id,
-                                   f"You have passed this lesson ✅\nYour score is {correct_count}/{all_count}",
-                                   reply_markup=home_keyboard)
+            await bot.send_message(u.chat_id, f"You have passed this lesson ✅{score}", reply_markup=home_keyboard)
         else:
-            await bot.send_message(u.chat_id,
-                                   f"You have canceled this lesson ❌\nYour score is {correct_count}/{all_count}",
-                                   reply_markup=home_keyboard)
+            await bot.send_message(u.chat_id, f"You have canceled this lesson ❌{score}", reply_markup=home_keyboard)
         return
     is_correct, original_value = lesson_progress_db.save_chat_answer(u.chat_id, u.text)
     correct_count, all_count = lesson_progress_db.get_score(u.chat_id)

@@ -34,17 +34,26 @@ def new_attempt(tg_id: int, group_name: str) -> None:
     """, [group_name, tg_id])
 
 
-def new_random_word(tg_id: int) -> str:
+def select_random_word(tg_id: int) -> str:
     return Transaction.select_one_field("""
-            INSERT INTO lesson_progress(attempt_id, word)
-            SELECT la.id, w.value
+            SELECT w.value
             FROM word w
                      LEFT JOIN lesson_attempt la on w.group_name = la.group_name
             WHERE la.tg_id = ?
             ORDER BY la.start DESC, RANDOM()
-            LIMIT 1
-            RETURNING word;
+            LIMIT 1;
     """, [tg_id])
+
+
+def save_word(tg_id: int, value: str) -> None:
+    Transaction.change("""
+            INSERT INTO lesson_progress(attempt_id, word)
+            SELECT id, ?
+            FROM lesson_attempt
+            WHERE tg_id = ?
+            ORDER BY start DESC
+            LIMIT 1;
+    """, [value, tg_id])
 
 
 def delete_last_word(tg_id: int) -> None:
