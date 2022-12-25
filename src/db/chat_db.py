@@ -11,14 +11,16 @@ class ChatStatus(Enum):
 
 
 class Chat:
-    CREATE_SCRIPT = """
-        CREATE TABLE IF NOT EXISTS chat
-        (
-            tg_id         INTEGER PRIMARY KEY,
-            status        TEXT,
-            language_code TEXT NOT NULL DEFAULT 'en-US'
-        );
-    """
+    CREATE_SCRIPT: list[str] = [
+        """
+            CREATE TABLE IF NOT EXISTS chat
+            (
+                tg_id         INTEGER PRIMARY KEY,
+                status        TEXT,
+                language_code TEXT NOT NULL DEFAULT 'en-US'
+            );
+        """
+    ]
 
     def __init__(self, tg_id: int, status: ChatStatus, language_code: str):
         self.tg_id: int = tg_id

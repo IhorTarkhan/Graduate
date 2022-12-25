@@ -2,13 +2,15 @@ from src.db.Transaction import Transaction
 
 
 class Language:
-    CREATE_SCRIPT = """
-        CREATE TABLE IF NOT EXISTS language
-        (
-            code TEXT PRIMARY KEY,
-            name TEXT
-        );
-    """
+    CREATE_SCRIPT: list[str] = [
+        """
+            CREATE TABLE IF NOT EXISTS language
+            (
+                code TEXT PRIMARY KEY,
+                name TEXT
+            );
+        """
+    ]
 
     def __init__(self, code: str, name: str):
         self.code: str = code

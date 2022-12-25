@@ -1,6 +1,7 @@
 import logging
 import sys
 
+from lazy_streams import stream
 from telegram.ext import filters, ApplicationBuilder, Application, MessageHandler, CallbackQueryHandler
 
 from src.bot.message_handler import handle_text, handle_callback, error_handler
@@ -17,15 +18,13 @@ def __setup():
     logging.basicConfig(level=logging.INFO,
                         format="%(asctime)s.%(msecs)03d %(levelname)7s : %(message)s",
                         datefmt="%Y-%m-%d %H:%M:%S")
-    Transaction.open()
-    Transaction.change(Chat.CREATE_SCRIPT)
-    Transaction.change(Language.CREATE_SCRIPT)
-    Transaction.change(BasicWords.CREATE_SCRIPT)
-    Transaction.change(LessonProgress.CREATE_SCRIPT)
+
+    stream([Chat, Language, BasicWords, LessonProgress]) \
+        .map(lambda x: x.CREATE_SCRIPT) \
+        .for_each(lambda x: stream(x).for_each(Transaction.change))
 
     insert_basic_languages()
     download_basic_words()
-    Transaction.commit()
 
 
 if __name__ == "__main__":

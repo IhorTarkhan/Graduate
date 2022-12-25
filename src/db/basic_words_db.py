@@ -2,28 +2,32 @@ from src.db.Transaction import Transaction
 
 
 class BasicWords:
-    CREATE_SCRIPT = """
-        CREATE TABLE IF NOT EXISTS words_level
-        (
-            ord   INTEGER PRIMARY KEY AUTOINCREMENT,
-            title TEXT UNIQUE
-        );
-        
-        CREATE TABLE IF NOT EXISTS words_group
-        (
-            ord        INTEGER PRIMARY KEY AUTOINCREMENT,
-            title      TEXT,
-            level_name TEXT,
-            FOREIGN KEY (level_name) REFERENCES words_level (title)
-        );
-        
-        CREATE TABLE IF NOT EXISTS word
-        (
-            value      TEXT,
-            group_name TEXT,
-            FOREIGN KEY (group_name) REFERENCES words_group (title)
-        );
-    """
+    CREATE_SCRIPT: list[str] = [
+        """
+            CREATE TABLE IF NOT EXISTS words_level
+            (
+                ord   INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT UNIQUE
+            );
+        """,
+        """
+                CREATE TABLE IF NOT EXISTS words_group
+                (
+                    ord        INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title      TEXT,
+                    level_name TEXT,
+                    FOREIGN KEY (level_name) REFERENCES words_level (title)
+                );
+        """,
+        """
+            CREATE TABLE IF NOT EXISTS word
+            (
+                value      TEXT,
+                group_name TEXT,
+                FOREIGN KEY (group_name) REFERENCES words_group (title)
+            );
+        """
+    ]
 
     def __init__(self, groups: str, word: str):
         self.groups: str = groups

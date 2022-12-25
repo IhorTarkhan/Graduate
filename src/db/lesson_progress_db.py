@@ -2,23 +2,27 @@ from src.db.Transaction import Transaction
 
 
 class LessonProgress:
-    CREATE_SCRIPT = """
-        CREATE TABLE IF NOT EXISTS lesson_attempt
-        (
-            id            INTEGER PRIMARY KEY AUTOINCREMENT,
-            tg_id         INTEGER,
-            group_name    TEXT,
-            language_code TEXT,
-            start         DATE DEFAULT CURRENT_TIMESTAMP
-        );
-        CREATE TABLE IF NOT EXISTS lesson_progress
-        (
-            id         INTEGER PRIMARY KEY AUTOINCREMENT,
-            attempt_id  INTEGER,
-            word        TEXT,
-            chat_answer TEXT
-        );
-    """
+    CREATE_SCRIPT: list[str] = [
+        """
+            CREATE TABLE IF NOT EXISTS lesson_attempt
+            (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                tg_id         INTEGER,
+                group_name    TEXT,
+                language_code TEXT,
+                start         DATE DEFAULT CURRENT_TIMESTAMP
+            );
+        """,
+        """
+            CREATE TABLE IF NOT EXISTS lesson_progress
+            (
+                id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                attempt_id  INTEGER,
+                word        TEXT,
+                chat_answer TEXT
+            );
+        """
+    ]
 
 
 def new_attempt(tg_id: int, group_name: str) -> None:

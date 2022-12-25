@@ -9,15 +9,19 @@ class Transaction:
     cursor: Optional[Cursor] = None
 
     @staticmethod
+    def is_open() -> bool:
+        return Transaction.cursor is not None or Transaction.connection is not None
+
+    @staticmethod
     def open() -> None:
-        if Transaction.cursor is not None or Transaction.connection is not None:
-            raise ValueError("Transaction is already open")
+        if Transaction.is_open():
+            return
         Transaction.connection = sqlite3.connect(Transaction.database_location)
         Transaction.cursor = Transaction.connection.cursor()
 
     @staticmethod
     def commit() -> None:
-        if Transaction.cursor is None or Transaction.connection is None:
+        if not Transaction.is_open():
             return
         Transaction.cursor.close()
         Transaction.connection.commit()
@@ -28,7 +32,7 @@ class Transaction:
 
     @staticmethod
     def rollback() -> None:
-        if Transaction.cursor is None or Transaction.connection is None:
+        if not Transaction.is_open():
             return
         Transaction.cursor.close()
         Transaction.connection.rollback()
@@ -39,20 +43,39 @@ class Transaction:
 
     @staticmethod
     def select_one(sql: str, parameters: list = ()) -> Any:
-        return Transaction.cursor.execute(sql, list(parameters)).fetchone()
+        was_open = Transaction.is_open()
+        if not was_open:
+            Transaction.open()
+        result = Transaction.cursor.execute(sql, list(parameters)).fetchone()
+        if not was_open:
+            Transaction.commit()
+        return result
 
     @staticmethod
     def select_one_field(sql: str, parameters: list = ()) -> Any:
-        return Transaction.select_one(sql, parameters)[0]
+        was_open = Transaction.is_open()
+        if not was_open:
+            Transaction.open()
+        result = Transaction.select_one(sql, parameters)[0]
+        if not was_open:
+            Transaction.commit()
+        return result
 
     @staticmethod
     def select(sql: str, parameters: list = ()) -> list[Any]:
-        return Transaction.cursor.execute(sql, list(parameters)).fetchall()
+        was_open = Transaction.is_open()
+        if not was_open:
+            Transaction.open()
+        result = Transaction.cursor.execute(sql, list(parameters)).fetchall()
+        if not was_open:
+            Transaction.commit()
+        return result
 
     @staticmethod
     def change(sql: str, parameters: list = ()):
-        if len(parameters) == 0:
-            for s in sql.split(";"):
-                Transaction.cursor.execute(s)
-        else:
-            Transaction.cursor.execute(sql, list(parameters))
+        was_open = Transaction.is_open()
+        if not was_open:
+            Transaction.open()
+        Transaction.cursor.execute(sql, list(parameters))
+        if not was_open:
+            Transaction.commit()
