@@ -56,7 +56,7 @@ def find_by_id(tg_id: int) -> Chat:
         """
             SELECT c.tg_id, c.status, l.code, l.name, l.translate_api_code
             FROM chat c
-                     LEFT JOIN language l on c.language_code = l.code
+                     LEFT JOIN language l ON c.language_code = l.code
             WHERE tg_id = ?;
         """, [tg_id])
     return Chat(select[0], ChatStatus(select[1]), Language(select[2], select[3], select[4]))

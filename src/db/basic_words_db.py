@@ -1,3 +1,6 @@
+from lazy_streams import stream
+
+from src.bot.message_handlers.lesson_progress import REQUIRED_WORDS, REQUIRED_RATE
 from src.db.Transaction import Transaction
 
 
@@ -35,10 +38,11 @@ class BasicWords:
 
 
 class WordGroup:
-    def __init__(self, order: int, level_name: str, title: str):
+    def __init__(self, order: int, level_name: str, title: str, was_success: bool = False):
         self.ord: int = order
         self.level_name: str = level_name
         self.title: str = title
+        self.was_success: bool = was_success
 
 
 def insert_word_lever(level: str):
@@ -72,14 +76,29 @@ def select_word_count() -> int:
 PAGE_SIZE: int = 5
 
 
-def select_word_groups(page: int = 0) -> list[WordGroup]:
+def select_word_groups(chat_id: int, page: int) -> list[WordGroup]:
     select = Transaction.select(""" 
-                SELECT ord, level_name, title
-                FROM words_group
+                SELECT ord, level_name, title, SUM(total >= ? AND CAST(success AS REAL) / total > ?) >= 1
+                FROM (SELECT wg.ord,
+                             wg.level_name,
+                             wg.title,
+                             SUM(UPPER(lp.word) == UPPER(lp.chat_answer)) AS success,
+                             COUNT(*)                                     AS total
+                      FROM words_group wg
+                               LEFT JOIN lesson_attempt la ON la.group_name = wg.title
+                               LEFT JOIN lesson_progress lp ON la.id = lp.attempt_id
+                               LEFT JOIN chat c ON c.tg_id = la.tg_id
+                      WHERE (c.language_code = la.language_code
+                          OR la.language_code IS NULL)
+                        AND (c.tg_id = ? OR c.tg_id IS NULL)
+                      GROUP BY wg.ord, wg.level_name, wg.title, la.id)
+                GROUP BY ord, level_name, title
                 ORDER BY ord
-                LIMIT ? OFFSET ?
-            """, [PAGE_SIZE + 1, PAGE_SIZE * page])
-    return list(map(lambda e: WordGroup(e[0], e[1], e[2]), select))
+                LIMIT ? OFFSET ?;
+            """, [REQUIRED_WORDS, REQUIRED_RATE, chat_id, PAGE_SIZE + 1, PAGE_SIZE * page])
+    return stream(select) \
+        .map(lambda e: WordGroup(e[0], e[1], e[2], bool(e[3]))) \
+        .to_list()
 
 
 def select_random_word(group_name: str) -> str:

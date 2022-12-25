@@ -20,7 +20,7 @@ def __prepare_message_text(word_groups: list[WordGroup], has_previous: bool, has
             last_level_name = wg.level_name
             text_list.append("")
             text_list.append(f"*{last_level_name.upper()}*:")
-        text_list.append(f"{wg.ord}. {wg.title}")
+        text_list.append(f"{wg.ord}. {wg.title} {'✅' if wg.was_success else ''}")
     if has_next:
         text_list.append("...")
     return "\n".join(text_list)
@@ -42,8 +42,8 @@ def __prepare_message_reply_markup(word_groups: list[WordGroup], has_previous: b
     return InlineKeyboardMarkup(inline_buttons)
 
 
-def __select_word_groups(page):
-    word_groups: list[WordGroup] = basic_words_db.select_word_groups(page)
+def __select_word_groups(chat_id: int, page: int):
+    word_groups: list[WordGroup] = basic_words_db.select_word_groups(chat_id, page)
     has_previous = page != 0
     has_next = len(word_groups) > PAGE_SIZE
     if has_next:
@@ -51,8 +51,8 @@ def __select_word_groups(page):
     return word_groups, has_previous, has_next
 
 
-def __prepare_message(page: int = 0) -> tuple[str, InlineKeyboardMarkup]:
-    word_groups, has_previous, has_next = __select_word_groups(page)
+def __prepare_message(chat_id: int, page: int = 0) -> tuple[str, InlineKeyboardMarkup]:
+    word_groups, has_previous, has_next = __select_word_groups(chat_id, page)
 
     text = __prepare_message_text(word_groups, has_previous, has_next)
     reply_markup = __prepare_message_reply_markup(word_groups, has_previous, has_next, page)
@@ -60,7 +60,7 @@ def __prepare_message(page: int = 0) -> tuple[str, InlineKeyboardMarkup]:
 
 
 async def start_select_lesson_flow(u: UpdateAdapter, bot: Bot):
-    text, reply_markup = __prepare_message()
+    text, reply_markup = __prepare_message(u.chat_id)
     await bot.send_message(u.chat_id, text, "markdown", reply_markup=reply_markup)
 
 
@@ -73,7 +73,7 @@ async def select_lesson(u: UpdateAdapter, bot: Bot):
         await bot.edit_message_text("❌ Yor have cancel lesson selection", u.chat_id, u.original_message_id)
     elif split_text.startswith(BotInMessageButton.PAGE.value):
         new_page = int(split_text[len(BotInMessageButton.PAGE.value):])
-        new_text, reply_markup = __prepare_message(new_page)
+        new_text, reply_markup = __prepare_message(u.chat_id, new_page)
         await bot.edit_message_text(new_text,
                                     u.chat_id,
                                     u.original_message_id,
