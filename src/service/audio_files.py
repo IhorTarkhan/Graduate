@@ -8,8 +8,9 @@ def sound_audio(language: str, word: str, title: Optional[str] = None) -> str:
     if title is None:
         title = word
     title = title[:17] + "..." if len(title) > 17 else title
+    title = urllib.parse.quote(title)
 
-    request_data = {"data": {"text": word, "voice": language}}
-    created_sound = requests.post("https://api.soundoftext.com/sounds/", json=request_data).json()
+    request = {"data": {"text": word, "voice": language}}
+    response = requests.post("https://api.soundoftext.com/sounds/", json=request).json()
     # todo error handler (additional request)
-    return f"http://ihor-tarkhan.com/files.soundoftext.com/{urllib.parse.quote(title)}.mp3?id={created_sound['id']}"
+    return f"http://soundoftext.proxy.graduate.ihor-tarkhan.com/{title}.mp3?id={response['id']}"
