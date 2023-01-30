@@ -18,6 +18,6 @@ class BotInMessageButton(Enum):
 
 
 home_keyboard = ReplyKeyboardMarkup([
-    [KeyboardButton(BotKeyboardButton.CHANGE_VOICE_LANGUAGE.value)],
-    [KeyboardButton(BotKeyboardButton.TAKE_A_LESSON.value)]
+    [KeyboardButton(BotKeyboardButton.TAKE_A_LESSON.value)],
+    [KeyboardButton(BotKeyboardButton.CHANGE_VOICE_LANGUAGE.value)]
 ])

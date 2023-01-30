@@ -62,15 +62,15 @@ def insert_words(words: list[str], group: str):
 
 
 def select_level_count() -> int:
-    return Transaction.select_one_field("SELECT COUNT(*) FROM words_level")
+    return Transaction.select_one_field("SELECT COUNT(*) FROM words_level;")
 
 
 def select_group_count() -> int:
-    return Transaction.select_one_field("SELECT COUNT(*) FROM words_group")
+    return Transaction.select_one_field("SELECT COUNT(*) FROM words_group;")
 
 
 def select_word_count() -> int:
-    return Transaction.select_one_field("SELECT COUNT(*) FROM word")
+    return Transaction.select_one_field("SELECT COUNT(*) FROM word;")
 
 
 PAGE_SIZE: int = 5
@@ -99,13 +99,3 @@ def select_word_groups(chat_id: int, page: int) -> list[WordGroup]:
     return stream(select) \
         .map(lambda e: WordGroup(e[0], e[1], e[2], bool(e[3]))) \
         .to_list()
-
-
-def select_random_word(group_name: str) -> str:
-    return Transaction.select_one_field(""" 
-                SELECT value
-                FROM word
-                WHERE group_name = ?
-                ORDER BY RANDOM()
-                LIMIT 1;
-            """, [group_name])

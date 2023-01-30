@@ -34,15 +34,16 @@ def new_attempt(tg_id: int, group_name: str) -> None:
     """, [group_name, tg_id])
 
 
-def select_random_word(tg_id: int) -> str:
-    return Transaction.select_one_field("""
-            SELECT w.value
+def select_random_word(tg_id: int) -> (str, str):
+    select_one = Transaction.select_one("""
+            SELECT w.value, w.group_name
             FROM word w
                      LEFT JOIN lesson_attempt la on w.group_name = la.group_name
             WHERE la.tg_id = ?
             ORDER BY la.start DESC, RANDOM()
             LIMIT 1;
     """, [tg_id])
+    return select_one[0], select_one[1]
 
 
 def save_word(tg_id: int, value: str) -> None:
