@@ -7,7 +7,8 @@ from telegram.ext import CallbackContext
 from src.bot.UpdateAdapter import UpdateAdapter
 from src.bot.bot_commands import BotCommand, BotKeyboardButton
 from src.bot.message_handlers.change_voice_language import change_voice_language, start_change_voice_language_flow
-from src.bot.message_handlers.common import command_start, processing
+from src.bot.message_handlers.commands import command_start, processing, command_help, command_numbers_study, \
+    command_numbers_test
 from src.bot.message_handlers.lesson_progress import lesson_progress
 from src.bot.message_handlers.select_leson import start_select_lesson_flow, select_lesson
 from src.bot.message_handlers.sound_text import sound_text
@@ -23,8 +24,14 @@ async def handle_text(update: Update, context: CallbackContext):
 
     chat_db.insert_if_not_exist(u.chat_id)
     status: ChatStatus = chat_db.find_by_id(u.chat_id).status
-    if u.is_text(BotCommand.COMMAND_START):
+    if u.is_text(BotCommand.START):
         await command_start(u, bot)
+    elif u.is_text(BotCommand.HELP):
+        await command_help(u, bot)
+    elif u.is_text(BotCommand.NUMBERS_STUDY):
+        await command_numbers_study(u, bot)
+    elif u.is_text(BotCommand.NUMBERS_TEST):
+        await command_numbers_test(u, bot)
     elif status == ChatStatus.PROCESSING:
         await processing(u, bot)
     elif status == ChatStatus.STUDYING_LESSON:

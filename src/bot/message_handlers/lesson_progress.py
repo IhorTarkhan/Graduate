@@ -24,7 +24,7 @@ async def start_lesson(u: UpdateAdapter, bot: Bot, group_title: str):
     await bot.send_message(
         u.chat_id,
         f"To pass this lesson you have pass {at_less_info_required}",
-        reply_markup=ReplyKeyboardMarkup([[KeyboardButton("❌")]]))
+        reply_markup=ReplyKeyboardMarkup([[KeyboardButton("🚪🚶")]]))
     chat_db.update_status(u.chat_id, ChatStatus.STUDYING_LESSON)
     lesson_progress_db.new_attempt(u.chat_id, group_title)
     await send_random_audio_from_lesson(u, bot)
@@ -46,12 +46,12 @@ def format_current_score(correct_count: int, all_count: int, required_count: Opt
 
 
 async def lesson_progress(u: UpdateAdapter, bot: Bot):
-    if u.text == "❌":
+    if u.text == "🚪🚶":
         lesson_progress_db.delete_last_word(u.chat_id)
         chat_db.update_status(u.chat_id, ChatStatus.NONE)
         correct_count, all_count = lesson_progress_db.get_score(u.chat_id)
         await bot.send_message(u.chat_id,
-                               f"You have canceled this lesson ❌\n" + format_current_score(correct_count, all_count),
+                               f"You have canceled this lesson 🚪🚶\n" + format_current_score(correct_count, all_count),
                                reply_markup=home_keyboard)
         return
     is_correct, original_value = lesson_progress_db.save_chat_answer(u.chat_id, u.text)

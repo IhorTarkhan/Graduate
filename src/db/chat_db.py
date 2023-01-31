@@ -9,6 +9,8 @@ class ChatStatus(Enum):
     NONE = None
     PROCESSING = "PROCESSING"
     STUDYING_LESSON = "STUDYING_LESSON"
+    NUMBERS_STUDY = "NUMBERS_STUDY"
+    NUMBERS_LESSON = "NUMBERS_LESSON"
 
 
 class Chat:

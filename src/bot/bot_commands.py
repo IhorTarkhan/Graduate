@@ -4,7 +4,10 @@ from telegram import ReplyKeyboardMarkup, KeyboardButton
 
 
 class BotCommand(Enum):
-    COMMAND_START = "/start"
+    START = "/start"
+    HELP = "/help"
+    NUMBERS_STUDY = "/numbers_study"
+    NUMBERS_TEST = "/numbers_test"
 
 
 class BotKeyboardButton(Enum):
