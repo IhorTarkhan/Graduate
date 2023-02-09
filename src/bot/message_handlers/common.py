@@ -24,12 +24,3 @@ async def can_not_understand_you(u: UpdateAdapter, bot: Bot):
 
 async def command_help(u: UpdateAdapter, bot: Bot):
     await bot.send_message(u.chat_id, "In dev")
-
-
-async def command_numbers_study(u: UpdateAdapter, bot: Bot):
-    # chat_db.update_status(u.chat_id, ChatStatus.NUMBERS_STUDY)
-    await bot.send_message(u.chat_id, "In dev command_numbers_study")
-
-
-async def command_numbers_test(u: UpdateAdapter, bot: Bot):
-    await bot.send_message(u.chat_id, "In dev command_numbers_test")

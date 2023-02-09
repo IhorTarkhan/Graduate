@@ -8,6 +8,7 @@ from src.bot.message_handler import handle_text, handle_callback, error_handler
 from src.db.Transaction import Transaction
 from src.db.basic_words_db import BasicWords
 from src.db.chat_db import Chat
+from src.db.infinity_numbers_db import InfinityNumbers
 from src.db.language_db import Language
 from src.db.lesson_progress_db import LessonProgress
 from src.service.basic_languages import insert_basic_languages
@@ -19,7 +20,7 @@ def __setup():
                         format="%(asctime)s.%(msecs)03d %(levelname)7s : %(message)s",
                         datefmt="%Y-%m-%d %H:%M:%S")
 
-    stream([Chat, Language, BasicWords, LessonProgress]) \
+    stream([Chat, Language, BasicWords, LessonProgress, InfinityNumbers]) \
         .map(lambda x: x.CREATE_SCRIPT) \
         .for_each(lambda x: stream(x).for_each(Transaction.change))
 

@@ -27,3 +27,6 @@ class UpdateAdapter:
 
     def is_text(self, bot_command: Enum) -> bool:
         return self.type == UpdateAdapterType.TEXT and self.text == bot_command.value
+
+    def is_text_start_with(self, bot_command: Enum) -> bool:
+        return self.type == UpdateAdapterType.TEXT and self.text.startswith(bot_command.value)
