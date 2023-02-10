@@ -13,7 +13,7 @@ from src.service.audio_files import sound_audio
 
 async def command_numbers_study(u: UpdateAdapter, bot: Bot):
     chat_db.update_status(u.chat_id, ChatStatus.NUMBERS_STUDY)
-    save_range(u)
+    save_range(u, "ee")
     await bot.send_message(u.chat_id,
                            "You start *Numbers study*",
                            parse_mode="markdown",
@@ -31,7 +31,7 @@ async def numbers_study_progress(u: UpdateAdapter, bot: Bot):
 
 async def command_numbers_test(u: UpdateAdapter, bot: Bot):
     chat_db.update_status(u.chat_id, ChatStatus.NUMBERS_TEST)
-    save_range(u)
+    save_range(u, "ee")
     await bot.send_message(u.chat_id,
                            "You start *Numbers test*",
                            parse_mode="markdown",
@@ -56,7 +56,7 @@ async def numbers_test_progress(u: UpdateAdapter, bot: Bot):
     await generate_and_send_new_number(u, bot, "test")
 
 
-def save_range(u: UpdateAdapter):
+def save_range(u: UpdateAdapter, error_message: str):
     split = u.text.split()
     if len(split) == 2:
         val = int(split[1])
@@ -74,7 +74,7 @@ def save_range(u: UpdateAdapter):
         range_from = val_from
         range_to = val_to
     else:
-        raise ValueError("todo error")
+        raise ValueError(error_message)
     infinity_numbers_db.upsert(InfinityNumbers(u.chat_id, range_from, range_to))
 
 

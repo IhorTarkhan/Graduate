@@ -7,9 +7,9 @@ from telegram.ext import CallbackContext
 from src.bot.UpdateAdapter import UpdateAdapter
 from src.bot.bot_commands import BotCommand, BotKeyboardButton
 from src.bot.message_handlers.change_voice_language import change_voice_language, start_change_voice_language_flow
-from src.bot.message_handlers.common import command_start, processing, command_help
+from src.bot.message_handlers.commands_common import command_start, command_help
 from src.bot.message_handlers.lesson_progress import lesson_progress
-from src.bot.message_handlers.numbers import \
+from src.bot.message_handlers.commands_numbers import \
     numbers_study_progress, numbers_test_progress, command_numbers_study, command_numbers_test
 from src.bot.message_handlers.select_leson import start_select_lesson_flow, select_lesson
 from src.bot.message_handlers.sound_text import sound_text
@@ -27,8 +27,6 @@ async def handle_text(update: Update, context: CallbackContext):
     status: ChatStatus = chat_db.find_by_id(u.chat_id).status
     if u.is_text(BotCommand.START):
         await command_start(u, bot)
-    elif status == ChatStatus.PROCESSING:
-        await processing(u, bot)
     elif status == ChatStatus.STUDYING_LESSON:
         await lesson_progress(u, bot)
     elif status == ChatStatus.NUMBERS_STUDY:
@@ -63,4 +61,4 @@ async def handle_callback(update: Update, context: CallbackContext):
 async def error_handler(update, context: Union[CallbackContext, Any]):
     logging.error("Exception while handling an update:", exc_info=context.error)
     Transaction.rollback()
-    await context.bot.send_message(UpdateAdapter(update).chat_id, str(context.error), parse_mode="markdown")
+    await context.bot.send_message(UpdateAdapter(update).chat_id, context.error.message, parse_mode="markdown")

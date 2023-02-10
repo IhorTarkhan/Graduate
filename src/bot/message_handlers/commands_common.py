@@ -10,16 +10,9 @@ async def command_start(u: UpdateAdapter, bot: Bot):
     chat_db.upsert(u.chat_id)
     lesson_progress_db.delete_chat_data(u.chat_id)
     await bot.send_message(u.chat_id,
-                           "Hi, I'm a 'Study by sound Bot', send me a test, and I will sound it!",
+                           "Hi, I'm a `Study by sound Bot`, send me a test, and I will sound it!",
+                           parse_mode="markdown",
                            reply_markup=home_keyboard)
-
-
-async def processing(u: UpdateAdapter, bot: Bot):
-    await bot.send_message(u.chat_id, "Please wait, processing your previous request...")
-
-
-async def can_not_understand_you(u: UpdateAdapter, bot: Bot):
-    await bot.send_message(u.chat_id, "Sorry, I can't understand you")
 
 
 async def command_help(u: UpdateAdapter, bot: Bot):

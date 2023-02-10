@@ -7,7 +7,6 @@ from src.db.language_db import Language
 
 class ChatStatus(Enum):
     NONE = None
-    PROCESSING = "PROCESSING"
     STUDYING_LESSON = "STUDYING_LESSON"
     NUMBERS_STUDY = "NUMBERS_STUDY"
     NUMBERS_TEST = "NUMBERS_TEST"
