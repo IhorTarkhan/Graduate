@@ -33,7 +33,12 @@ def upsert(val: InfinityNumbers) -> None:
 
 
 def update_last_number_to(tg_id: int) -> int:
-    return Transaction.change("UPDATE infinity_numbers SET last_number = ? WHERE tg_id = ?;", [tg_id])
+    return Transaction.change(
+        """
+            UPDATE infinity_numbers
+            SET last_number = ABS(RANDOM() % (range_to - range_from + 1)) + range_from
+            WHERE tg_id = ?;
+        """, [tg_id])
 
 
 def get_last_number_to(tg_id: int) -> int:

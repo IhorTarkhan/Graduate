@@ -63,4 +63,4 @@ async def handle_callback(update: Update, context: CallbackContext):
 async def error_handler(update, context: Union[CallbackContext, Any]):
     logging.error("Exception while handling an update:", exc_info=context.error)
     Transaction.rollback()
-    await context.bot.send_message(UpdateAdapter(update).chat_id, str(context.error))
+    await context.bot.send_message(UpdateAdapter(update).chat_id, str(context.error), parse_mode="markdown")
