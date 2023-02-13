@@ -1,7 +1,8 @@
+from lazy_streams import stream
 from telegram import Bot
 
 from src.bot.UpdateAdapter import UpdateAdapter
-from src.bot.bot_commands import home_keyboard
+from src.bot.bot_commands import home_keyboard, BotCommand
 from src.db import chat_db
 from src.db import lesson_progress_db
 
@@ -16,4 +17,5 @@ async def command_start(u: UpdateAdapter, bot: Bot):
 
 
 async def command_help(u: UpdateAdapter, bot: Bot):
-    await bot.send_message(u.chat_id, "In dev")
+    text = stream([e for e in BotCommand]).map(lambda e: e.help()).to_string("\n\n\n")
+    await bot.send_message(u.chat_id, text)

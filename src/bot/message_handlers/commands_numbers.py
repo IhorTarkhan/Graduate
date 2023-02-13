@@ -3,7 +3,7 @@ from typing import Optional
 from telegram import Bot, ReplyKeyboardMarkup, KeyboardButton
 
 from src.bot.UpdateAdapter import UpdateAdapter
-from src.bot.bot_commands import home_keyboard
+from src.bot.bot_commands import home_keyboard, BotCommand
 from src.db import chat_db
 from src.db import infinity_numbers_db
 from src.db.chat_db import ChatStatus
@@ -13,7 +13,7 @@ from src.service.audio_files import sound_audio
 
 async def command_numbers_study(u: UpdateAdapter, bot: Bot):
     chat_db.update_status(u.chat_id, ChatStatus.NUMBERS_STUDY)
-    save_range(u, "ee")
+    save_range(u, "Incorrect format:\n" + BotCommand.NUMBERS_STUDY.help())
     await bot.send_message(u.chat_id,
                            "You start *Numbers study*",
                            parse_mode="markdown",
@@ -31,7 +31,7 @@ async def numbers_study_progress(u: UpdateAdapter, bot: Bot):
 
 async def command_numbers_test(u: UpdateAdapter, bot: Bot):
     chat_db.update_status(u.chat_id, ChatStatus.NUMBERS_TEST)
-    save_range(u, "ee")
+    save_range(u, "Incorrect format:\n" + BotCommand.NUMBERS_TEST.help())
     await bot.send_message(u.chat_id,
                            "You start *Numbers test*",
                            parse_mode="markdown",
