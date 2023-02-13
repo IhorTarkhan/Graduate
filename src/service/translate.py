@@ -1,4 +1,5 @@
 import logging
+import sys
 
 import requests
 
@@ -10,7 +11,7 @@ def translate(to: str, word: str) -> str:
     headers = {
         "content-type": "application/x-www-form-urlencoded",
         "Accept-Encoding": "application/gzip",
-        "X-RapidAPI-Key": "aae9d9b964mshd7a6d9bb47f09e6p1bacd7jsnfdcded58c655",
+        "X-RapidAPI-Key": sys.argv[2],
         "X-RapidAPI-Host": "google-translate1.p.rapidapi.com"
     }
 

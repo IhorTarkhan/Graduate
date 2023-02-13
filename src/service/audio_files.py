@@ -13,4 +13,5 @@ def sound_audio(language: str, word: str, title: Optional[str] = None) -> str:
     request = {"data": {"text": word, "voice": language}}
     response = requests.post("https://api.soundoftext.com/sounds/", json=request).json()
     # todo error handler (additional request)
-    return f"http://soundoftext.proxy.graduate.ihor-tarkhan.com/{title}.mp3?id={response['id']}"
+    url = f"http://soundoftext.proxy.graduate.ihor-tarkhan.com/{title}.mp3?id={response['id']}"
+    return url

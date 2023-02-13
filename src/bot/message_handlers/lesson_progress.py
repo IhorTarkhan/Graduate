@@ -12,7 +12,7 @@ from src.service.translate import translate
 CALLBACK_PREFIX: str = "LESSON_"
 REQUIRED_WORDS: int = 15
 REQUIRED_RATE: float = 0.8
-at_less_info_required: str = f"at less {int(REQUIRED_RATE * REQUIRED_WORDS)}/{REQUIRED_WORDS} required"
+at_less_info_required: str = f"{int(REQUIRED_RATE * REQUIRED_WORDS)}/{REQUIRED_WORDS} required"
 
 
 async def start_lesson(u: UpdateAdapter, bot: Bot, group_title: str):
@@ -23,7 +23,7 @@ async def start_lesson(u: UpdateAdapter, bot: Bot, group_title: str):
         parse_mode="markdown")
     await bot.send_message(
         u.chat_id,
-        f"To pass this lesson you have pass {at_less_info_required}",
+        f"To pass this lesson {at_less_info_required}",
         reply_markup=ReplyKeyboardMarkup([[KeyboardButton("🚪")]]))
     chat_db.update_status(u.chat_id, ChatStatus.STUDYING_LESSON)
     lesson_progress_db.new_attempt(u.chat_id, group_title)
@@ -41,8 +41,10 @@ async def send_random_audio_from_lesson(u: UpdateAdapter, bot: Bot):
 
 
 def format_current_score(correct_count: int, all_count: int, required_count: Optional[bool] = False) -> str:
-    left_info = f"{REQUIRED_WORDS - all_count} left, " if required_count and REQUIRED_WORDS > all_count else ""
-    return f"Your score is {correct_count}/{all_count} ({left_info}{at_less_info_required})"
+    if required_count and REQUIRED_WORDS > all_count:
+        return f"Your score is {correct_count}/{all_count} ({REQUIRED_WORDS - all_count} left, {at_less_info_required})"
+    else:
+        return f"Your score is {correct_count}/{all_count} ({at_less_info_required})"
 
 
 async def lesson_progress(u: UpdateAdapter, bot: Bot):
@@ -58,11 +60,19 @@ async def lesson_progress(u: UpdateAdapter, bot: Bot):
     correct_count, all_count = lesson_progress_db.get_score(u.chat_id)
     score_info = format_current_score(correct_count, all_count, True)
     if is_correct:
-        await bot.send_message(u.chat_id, f"Correct\n{score_info}")
+        is_correct_msg = f"Correct"
     else:
-        await bot.send_message(u.chat_id, f"Incorrect, it was _{original_value}_\n{score_info}", "markdown")
+        is_correct_msg = f"Incorrect, it was _{original_value}_"
+    if correct_count >= int(REQUIRED_RATE * REQUIRED_WORDS):
+        result = "Congrats ✅"
+    else:
+        result = "Unfortunately you failed ❌"
     if all_count == REQUIRED_WORDS:
         chat_db.update_status(u.chat_id, ChatStatus.NONE)
-        await bot.send_message(u.chat_id, f"In dev", reply_markup=home_keyboard)
-        return
-    await send_random_audio_from_lesson(u, bot)
+        await bot.send_message(u.chat_id,
+                               f"{is_correct_msg}\n{score_info}\n\n{result}",
+                               "markdown",
+                               reply_markup=home_keyboard)
+    else:
+        await bot.send_message(u.chat_id, f"{is_correct_msg}\n{score_info}", "markdown")
+        await send_random_audio_from_lesson(u, bot)
